@@ -1,3 +1,4 @@
+import { toHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import {
   Implementation,
@@ -39,8 +40,9 @@ export async function grantPermission(opts: GrantOptions) {
   const delegation = createDelegation({
     scope,
     to: opts.delegate,
-    from: delegatorSmartAccount,
+    from: delegatorSmartAccount.address,
     environment: delegatorSmartAccount.environment,
+    salt: toHex(crypto.getRandomValues(new Uint8Array(32)))
   });
 
   // Sign delegation
@@ -51,6 +53,7 @@ export async function grantPermission(opts: GrantOptions) {
   // Store delegation
   console.log("   Storing...");
   const storageClient = getStorageClient(config);
+  console.log(signedDelegation);
   const delegationHash = await storageClient.storeDelegation(signedDelegation);
 
   console.log(`\n✅ Permission granted and stored`);

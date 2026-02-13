@@ -1,8 +1,9 @@
-import { base, sepolia } from "viem/chains";
+import { base, baseSepolia, sepolia } from "viem/chains";
 import type { Chain } from "viem";
 
 export const SUPPORTED_CHAINS: Record<string, Chain> = {
   base,
+  baseSepolia,
   sepolia,
 };
 

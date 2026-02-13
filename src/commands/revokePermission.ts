@@ -65,8 +65,6 @@ export async function revokePermission(opts: RevokeOptions) {
         data: disableCalldata,
       },
     ],
-    maxFeePerGas: 1n,
-    maxPriorityFeePerGas: 1n,
   });
 
   console.log(`\n✅ Permission revoked`);
