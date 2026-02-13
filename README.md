@@ -13,13 +13,21 @@ npm run build
 
 ## Commands
 
-### `create`
+### `init`
 
-Generate a private key, store in `permissions.json`, and upgrade the EOA to an EIP-7702 smart account.
+Generate a private key and save to `permissions.json`. Fund the address before upgrading.
 
 ```bash
-permissions-cli create                    # Default: Base
-permissions-cli create --chain sepolia    # Sepolia testnet
+permissions-cli init                    # Default: Base
+permissions-cli init --chain sepolia    # Sepolia testnet
+```
+
+### `create`
+
+Upgrade an existing EOA to an EIP-7702 smart account. Requires a funded account (run `init` first).
+
+```bash
+permissions-cli create
 ```
 
 ### `show`

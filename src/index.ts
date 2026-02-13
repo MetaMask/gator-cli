@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
+import { init } from "./commands/init.js";
 import { create } from "./commands/create.js";
 import { show } from "./commands/show.js";
 import { status } from "./commands/status.js";
@@ -23,11 +24,17 @@ program
   )
   .version("0.1.0");
 
+// init
+program
+  .command("init")
+  .description("Generate a private key and save to permissions.json (fund before upgrading)")
+  .option("--chain <chain>", "Target chain (base, sepolia)", "base")
+  .action(init);
+
 // create
 program
   .command("create")
-  .description("Create private key, store in permissions.json, upgrade EOA to EIP-7702")
-  .option("--chain <chain>", "Target chain (base, sepolia)", "base")
+  .description("Upgrade existing EOA to EIP-7702 smart account (requires funded account)")
   .action(create);
 
 // show
