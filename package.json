@@ -9,6 +9,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -20,7 +22,8 @@
     "@types/node": "^22.0.0",
     "tsup": "^8.5.1",
     "tsx": "^4.19.0",
-    "typescript": "~5.7.3"
+    "typescript": "~5.7.3",
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": "^20 || ^22 || >=24"

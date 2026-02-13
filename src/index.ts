@@ -10,10 +10,7 @@ import { redeemPermission } from "@/commands/redeemPermission.js";
 import { revokePermission } from "@/commands/revokePermission.js";
 import { inspect } from "@/commands/inspect.js";
 import type { Address, Hex } from "viem";
-
-function commaSplit(val: string): string[] {
-  return val.split(",").map((s) => s.trim());
-}
+import { commaSplit } from "@/lib/utils.js";
 
 const program = new Command();
 
