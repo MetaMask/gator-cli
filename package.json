@@ -1,17 +1,28 @@
 {
-  "name": "permissions-cli",
+  "name": "gator",
   "version": "0.1.0",
   "description": "ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartgator/permissions-cli.git"
+  },
   "type": "module",
   "bin": {
-    "permissions-cli": "./dist/index.js"
+    "gator": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
+    "build:docs": "typedoc",
+    "clean": "rm -rf dist",
     "dev": "tsx src/index.ts",
+    "format": "prettier '**/*.json' '**/*.md' '**/*.yml' '**/*.mjs' '**/*.mts' '**/*.ts' --ignore-path .gitignore --no-error-on-unmatched-pattern --write",
+    "format:check": "prettier '**/*.json' '**/*.md' '**/*.yml' '**/*.mjs' '**/*.mts' '**/*.ts' --ignore-path .gitignore --no-error-on-unmatched-pattern --check",
+    "prepack": "./scripts/prepack.sh",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "clean": "rm -rf dist"
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@metamask/smart-accounts-kit": "^0.3.0",
@@ -20,9 +31,14 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@vitest/coverage-istanbul": "^4.0.18",
+    "prettier": "^3.3.3",
+    "prettier-plugin-packagejson": "^2.5.8",
     "tsup": "^8.5.1",
     "tsx": "^4.19.0",
+    "typedoc": "^0.26.11",
     "typescript": "~5.7.3",
+    "vite": "^6.4.1",
     "vitest": "^4.0.18"
   },
   "engines": {
