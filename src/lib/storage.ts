@@ -7,7 +7,7 @@ import {
   hexToBytes,
   concatBytes,
 } from "viem";
-import type { PermissionsConfig } from "../types.js";
+import type { PermissionsConfig } from "@/types.js";
 import { Delegation } from "@metamask/smart-accounts-kit";
 
 const DELEGATION_STORAGE_API_URL =
@@ -25,6 +25,14 @@ interface StorageClientOptions {
   apiKey: string;
   apiKeyId: string;
   apiUrl: string;
+}
+
+interface StoreDelegationResponse {
+  delegationHash: Hex;
+}
+
+interface StorageErrorResponse {
+  error: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -63,9 +71,9 @@ function getDelegationHash(delegation: Delegation): Hex {
     delegation.salt === "0x" ? 0n : BigInt(delegation.salt);
 
   const caveatsHash = getCaveatsArrayHash(
-    delegation.caveats.map((c: any) => ({
+    delegation.caveats.map((c) => ({
       enforcer: getAddress(c.enforcer),
-      terms: c.terms as Hex,
+      terms: c.terms,
     })),
   );
 
@@ -149,11 +157,11 @@ export function getStorageClient(config: PermissionsConfig) {
         body,
       });
 
-      const data: any = await response.json();
+      const data = (await response.json()) as StoreDelegationResponse | StorageErrorResponse;
 
       if (!response.ok || "error" in data) {
         throw new Error(
-          `Failed to store delegation: ${data.error ?? response.statusText}`,
+          `Failed to store delegation: ${"error" in data ? data.error : response.statusText}`,
         );
       }
 
@@ -182,11 +190,11 @@ export function getStorageClient(config: PermissionsConfig) {
         },
       );
 
-      const data: any = await response.json();
+      const data = (await response.json()) as Delegation[] | StorageErrorResponse;
 
       if (!response.ok || "error" in data) {
         throw new Error(
-          `Failed to fetch delegations: ${data.error ?? response.statusText}`,
+          `Failed to fetch delegations: ${"error" in data ? data.error : response.statusText}`,
         );
       }
 
@@ -213,11 +221,11 @@ export function getStorageClient(config: PermissionsConfig) {
         },
       );
 
-      const data: any = await response.json();
+      const data = (await response.json()) as Delegation[] | StorageErrorResponse;
 
       if (!response.ok || "error" in data) {
         throw new Error(
-          `Failed to fetch delegation chain: ${data.error ?? response.statusText}`,
+          `Failed to fetch delegation chain: ${"error" in data ? data.error : response.statusText}`,
         );
       }
 
@@ -237,11 +245,11 @@ export function getStorageClient(config: PermissionsConfig) {
         },
       );
 
-      const data: any = await response.json();
+      const data = (await response.json()) as Delegation | StorageErrorResponse;
 
       if (!response.ok || "error" in data) {
         throw new Error(
-          `Failed to fetch delegation: ${data.error ?? response.statusText}`,
+          `Failed to fetch delegation: ${"error" in data ? data.error : response.statusText}`,
         );
       }
 

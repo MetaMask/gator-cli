@@ -1,8 +1,7 @@
-import { privateKeyToAccount } from "viem/accounts";
-
-import { loadConfig } from "../lib/config.js";
-import { getStorageClient } from "../lib/storage.js";
-import type { InspectOptions } from "../types.js";
+import type { Delegation } from "@metamask/smart-accounts-kit";
+import { loadConfig } from "@/lib/config.js";
+import { getStorageClient } from "@/lib/storage.js";
+import type { InspectOptions } from "@/types.js";
 
 export async function inspect(opts: InspectOptions) {
   const config = loadConfig();
@@ -42,7 +41,7 @@ export async function inspect(opts: InspectOptions) {
       "RECEIVED",
     );
     const matching = received.filter(
-      (d: any) => d.delegator.toLowerCase() === opts.delegator!.toLowerCase(),
+      (d) => d.delegator.toLowerCase() === opts.delegator!.toLowerCase(),
     );
     console.log(`Found ${matching.length} delegation(s):`);
     for (const d of matching) {
@@ -57,7 +56,7 @@ export async function inspect(opts: InspectOptions) {
       "GIVEN",
     );
     const matching = given.filter(
-      (d: any) => d.delegate.toLowerCase() === opts.delegate!.toLowerCase(),
+      (d) => d.delegate.toLowerCase() === opts.delegate!.toLowerCase(),
     );
     console.log(`Found ${matching.length} delegation(s):`);
     for (const d of matching) {
@@ -66,7 +65,7 @@ export async function inspect(opts: InspectOptions) {
   }
 }
 
-function printDelegation(d: any) {
+function printDelegation(d: Delegation) {
   console.log(`  ─────────────────────────────`);
   console.log(`  Delegator:  ${d.delegator}`);
   console.log(`  Delegate:   ${d.delegate}`);

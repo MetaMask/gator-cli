@@ -12,6 +12,7 @@ export const DEFAULT_CHAIN_NAME = "base";
 
 export const DEFAULT_RPC: Record<number, string> = {
   [base.id]: "https://mainnet.base.org",
+  [baseSepolia.id]: "https://sepolia.base.org",
   [sepolia.id]: "https://rpc.sepolia.org",
 };
 

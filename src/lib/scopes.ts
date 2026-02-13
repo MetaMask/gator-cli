@@ -1,6 +1,6 @@
 import { parseUnits, parseEther, type PublicClient } from "viem";
-import { getTokenDecimals } from "./token.js";
-import type { GrantOptions } from "../types.js";
+import { getTokenDecimals } from "@/lib/token.js";
+import type { GrantOptions } from "@/types.js";
 
 export async function buildScope(
   opts: GrantOptions,

@@ -1,6 +1,6 @@
-import { configExists, loadConfig } from "../lib/config.js";
-import { getPublicClient } from "../lib/clients.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "../lib/constants.js";
+import { configExists, loadConfig } from "@/lib/config.js";
+import { getPublicClient } from "@/lib/clients.js";
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
 
 export async function status() {
   if (!configExists()) {

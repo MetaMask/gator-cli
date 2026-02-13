@@ -5,9 +5,9 @@ import {
   toMetaMaskSmartAccount,
   getSmartAccountsEnvironment,
 } from "@metamask/smart-accounts-kit";
-import { loadConfig, saveConfig } from "../lib/config.js";
-import { getPublicClient, getWalletClient } from "../lib/clients.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "../lib/constants.js";
+import { loadConfig, saveConfig } from "@/lib/config.js";
+import { getPublicClient, getWalletClient } from "@/lib/clients.js";
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
 import type { Chain } from "viem";
 
 export async function create() {

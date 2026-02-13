@@ -8,11 +8,11 @@ import {
 } from "@metamask/smart-accounts-kit";
 import { DelegationManager } from "@metamask/smart-accounts-kit/contracts";
 
-import { loadConfig } from "../lib/config.js";
-import { getPublicClient, getWalletClient, getBundlerClient } from "../lib/clients.js";
-import { getStorageClient } from "../lib/storage.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "../lib/constants.js";
-import type { RedeemOptions } from "../types.js";
+import { loadConfig } from "@/lib/config.js";
+import { getPublicClient, getWalletClient, getBundlerClient } from "@/lib/clients.js";
+import { getStorageClient } from "@/lib/storage.js";
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
+import type { RedeemOptions } from "@/types.js";
 
 export async function redeemPermission(opts: RedeemOptions) {
   const config = loadConfig();
@@ -34,7 +34,7 @@ export async function redeemPermission(opts: RedeemOptions) {
   );
 
   const matching = received.filter(
-    (d: any) => d.delegator.toLowerCase() === opts.delegator.toLowerCase(),
+    (d) => d.delegator.toLowerCase() === opts.delegator.toLowerCase(),
   );
 
   if (matching.length === 0) {
@@ -84,8 +84,6 @@ export async function redeemPermission(opts: RedeemOptions) {
         data: redeemCalldata,
       },
     ],
-    maxFeePerGas: 1n,
-    maxPriorityFeePerGas: 1n,
   });
 
   console.log(`\n✅ Permission redeemed`);
