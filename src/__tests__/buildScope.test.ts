@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { parseEther } from "viem";
 import type { PublicClient } from "viem";
-import { buildScope } from "@/lib/scopes.js";
-import type { GrantOptions } from "@/types.js";
+import { buildScope } from "../lib/scopes.js";
+import type { GrantOptions } from "../types.js";
 
-vi.mock("@/lib/token.js", () => ({
+vi.mock("../lib/token.js", () => ({
   getTokenDecimals: vi.fn().mockResolvedValue(6),
 }));
 

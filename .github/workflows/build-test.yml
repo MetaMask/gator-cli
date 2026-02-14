@@ -15,9 +15,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+      - run: corepack enable
+      - run: yarn install --immutable
+      - run: yarn build
       - name: Require clean working directory
         run: |
           if ! git diff --exit-code; then
@@ -33,9 +33,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22.x
-          cache: npm
-      - run: npm ci
-      - run: npm run format:check
+      - run: corepack enable
+      - run: yarn install --immutable
+      - run: yarn format:check
 
   test:
     name: Test
@@ -48,6 +48,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: npm ci
-      - run: npm test
+      - run: corepack enable
+      - run: yarn install --immutable
+      - run: yarn test

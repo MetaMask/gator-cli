@@ -1,15 +1,15 @@
 import { privateKeyToAccount } from "viem/accounts";
 
-import { loadConfig } from "@/lib/config.js";
-import { getPublicClient, getWalletClient, getBundlerClient } from "@/lib/clients.js";
-import { getStorageClient } from "@/lib/storage.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
+import { loadConfig } from "../lib/config.js";
+import { getPublicClient, getWalletClient, getBundlerClient } from "../lib/clients.js";
+import { getStorageClient } from "../lib/storage.js";
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "../lib/constants.js";
 import {
   Implementation,
   toMetaMaskSmartAccount,
 } from "@metamask/smart-accounts-kit";
 import { DelegationManager } from "@metamask/smart-accounts-kit/contracts";
-import type { RevokeOptions } from "@/types.js";
+import type { RevokeOptions } from "../types.js";
 
 export async function revokePermission(opts: RevokeOptions) {
   const config = loadConfig();

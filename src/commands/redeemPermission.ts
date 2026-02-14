@@ -8,11 +8,11 @@ import {
 } from "@metamask/smart-accounts-kit";
 import { DelegationManager } from "@metamask/smart-accounts-kit/contracts";
 
-import { loadConfig } from "@/lib/config.js";
-import { getPublicClient, getWalletClient, getBundlerClient } from "@/lib/clients.js";
-import { getStorageClient } from "@/lib/storage.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
-import type { RedeemOptions } from "@/types.js";
+import { loadConfig } from "../lib/config.js";
+import { getPublicClient, getWalletClient, getBundlerClient } from "../lib/clients.js";
+import { getStorageClient } from "../lib/storage.js";
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "../lib/constants.js";
+import type { RedeemOptions } from "../types.js";
 
 export async function redeemPermission(opts: RedeemOptions) {
   const config = loadConfig();

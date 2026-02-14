@@ -5,12 +5,12 @@ import {
   toMetaMaskSmartAccount,
   createDelegation,
 } from "@metamask/smart-accounts-kit";
-import { loadConfig } from "@/lib/config.js";
-import { getPublicClient, getWalletClient } from "@/lib/clients.js";
-import { getStorageClient } from "@/lib/storage.js";
-import { buildScope } from "@/lib/scopes.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
-import type { GrantOptions } from "@/types.js";
+import { loadConfig } from "../lib/config.js";
+import { getPublicClient, getWalletClient } from "../lib/clients.js";
+import { getStorageClient } from "../lib/storage.js";
+import { buildScope } from "../lib/scopes.js";
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "../lib/constants.js";
+import type { GrantOptions } from "../types.js";
 
 export async function grantPermission(opts: GrantOptions) {
   const config = loadConfig();

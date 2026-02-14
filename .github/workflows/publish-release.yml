@@ -18,19 +18,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22.x
-          cache: npm
-      - run: npm ci
+      - run: corepack enable
+      - run: yarn install --immutable
       - uses: MetaMask/action-publish-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npm run build
+      - run: yarn build
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
         with:
           name: publish-release-artifacts-${{ github.sha }}
           retention-days: 4
           include-hidden-files: true
-          path: ./dist
+          path: |
+            ./dist
+            ./node_modules/.yarn-state.yml
 
   publish-npm-dry-run:
     needs: publish-release
@@ -42,13 +44,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22.x
-          cache: npm
-      - run: npm ci
+      - run: corepack enable
+      - run: yarn install --immutable
       - name: Restore build artifacts
         uses: actions/download-artifact@v6
         with:
           name: publish-release-artifacts-${{ github.sha }}
-          path: ./dist
       - name: Dry Run Publish
         run: npm publish --dry-run
         env:
@@ -66,8 +67,8 @@ jobs:
         with:
           node-version: 22.x
           registry-url: https://registry.npmjs.org
-          cache: npm
-      - run: npm ci
+      - run: corepack enable
+      - run: yarn install --immutable
       - name: Restore build artifacts
         uses: actions/download-artifact@v6
         with:

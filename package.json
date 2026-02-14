@@ -7,14 +7,13 @@
     "url": "https://github.com/smartgator/permissions-cli.git"
   },
   "type": "module",
-  "bin": {
-    "gator": "./dist/index.js"
-  },
+  "bin": "./dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsc --project tsconfig.build.json",
+    "build:clean": "rm -rf dist && yarn build",
     "build:docs": "typedoc",
     "clean": "rm -rf dist",
     "dev": "tsx src/index.ts",
@@ -34,7 +33,6 @@
     "@vitest/coverage-istanbul": "^4.0.18",
     "prettier": "^3.3.3",
     "prettier-plugin-packagejson": "^2.5.8",
-    "tsup": "^8.5.1",
     "tsx": "^4.19.0",
     "typedoc": "^0.26.11",
     "typescript": "~5.7.3",
@@ -44,5 +42,6 @@
   "engines": {
     "node": "^20 || ^22 || >=24"
   },
-  "private": true
+  "private": true,
+  "packageManager": "yarn@4.12.0+sha512.f45ab632439a67f8bc759bf32ead036a1f413287b9042726b7cc4818b7b49e14e9423ba49b18f9e06ea4941c1ad062385b1d8760a8d5091a1a31e5f6219afca8"
 }

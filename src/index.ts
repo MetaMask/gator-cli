@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { init } from "@/commands/init.js";
-import { create } from "@/commands/create.js";
-import { show } from "@/commands/show.js";
-import { status } from "@/commands/status.js";
-import { grantPermission } from "@/commands/grantPermission.js";
-import { redeemPermission } from "@/commands/redeemPermission.js";
-import { revokePermission } from "@/commands/revokePermission.js";
-import { inspect } from "@/commands/inspect.js";
+import { init } from "./commands/init.js";
+import { create } from "./commands/create.js";
+import { show } from "./commands/show.js";
+import { status } from "./commands/status.js";
+import { grantPermission } from "./commands/grantPermission.js";
+import { redeemPermission } from "./commands/redeemPermission.js";
+import { revokePermission } from "./commands/revokePermission.js";
+import { inspect } from "./commands/inspect.js";
 import type { Address, Hex } from "viem";
-import { commaSplit } from "@/lib/utils.js";
+import { commaSplit } from "./lib/utils.js";
 
 const program = new Command();
 

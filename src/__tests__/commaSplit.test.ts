@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { commaSplit } from "@/lib/utils.js";
+import { commaSplit } from "../lib/utils.js";
 
 describe("commaSplit", () => {
   it("splits a comma-separated string into trimmed parts", () => {

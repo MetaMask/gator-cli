@@ -1,7 +1,7 @@
 import type { Delegation } from "@metamask/smart-accounts-kit";
-import { loadConfig } from "@/lib/config.js";
-import { getStorageClient } from "@/lib/storage.js";
-import type { InspectOptions } from "@/types.js";
+import { loadConfig } from "../lib/config.js";
+import { getStorageClient } from "../lib/storage.js";
+import type { InspectOptions } from "../types.js";
 
 export async function inspect(opts: InspectOptions) {
   const config = loadConfig();

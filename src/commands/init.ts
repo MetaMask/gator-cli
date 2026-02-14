@@ -1,7 +1,7 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { configExists, saveConfig } from "@/lib/config.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
-import type { CreateOptions, PermissionsConfig } from "@/types.js";
+import { configExists, saveConfig } from "../lib/config.js";
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "../lib/constants.js";
+import type { CreateOptions, PermissionsConfig } from "../types.js";
 
 export async function init(opts: CreateOptions) {
   if (configExists()) {

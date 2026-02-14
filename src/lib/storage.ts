@@ -7,7 +7,7 @@ import {
   hexToBytes,
   concatBytes,
 } from "viem";
-import type { PermissionsConfig } from "@/types.js";
+import type { PermissionsConfig } from "../types.js";
 import { Delegation } from "@metamask/smart-accounts-kit";
 
 const DELEGATION_STORAGE_API_URL =
