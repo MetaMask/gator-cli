@@ -3,5 +3,5 @@
  * Used by Commander to parse multi-value CLI options (e.g. --targets, --selectors).
  */
 export function commaSplit(val: string): string[] {
-  return val.split(",").map((s) => s.trim());
+  return val.split(',').map((s) => s.trim());
 }

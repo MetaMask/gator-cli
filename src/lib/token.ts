@@ -1,4 +1,4 @@
-import { erc20Abi, type Address, type PublicClient } from "viem";
+import { erc20Abi, type Address, type PublicClient } from 'viem';
 
 export async function getTokenDecimals(
   publicClient: PublicClient,
@@ -7,7 +7,7 @@ export async function getTokenDecimals(
   const decimals = await publicClient.readContract({
     address: tokenAddress,
     abi: erc20Abi,
-    functionName: "decimals",
+    functionName: 'decimals',
   });
   return decimals;
 }
@@ -19,7 +19,7 @@ export async function getTokenSymbol(
   const symbol = await publicClient.readContract({
     address: tokenAddress,
     abi: erc20Abi,
-    functionName: "symbol",
+    functionName: 'symbol',
   });
   return symbol;
 }
