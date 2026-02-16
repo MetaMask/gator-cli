@@ -5,9 +5,9 @@ import { init } from './commands/init.js';
 import { create } from './commands/create.js';
 import { show } from './commands/show.js';
 import { status } from './commands/status.js';
-import { grantPermission } from './commands/grantPermission.js';
-import { redeemPermission } from './commands/redeemPermission.js';
-import { revokePermission } from './commands/revokePermission.js';
+import { grant } from './commands/grant.js';
+import { redeem } from './commands/redeem.js';
+import { revoke } from './commands/revoke.js';
 import { inspect } from './commands/inspect.js';
 import type { Address, Hex } from 'viem';
 import { commaSplit } from './lib/utils.js';
@@ -15,7 +15,7 @@ import { commaSplit } from './lib/utils.js';
 const program = new Command();
 
 program
-  .name('@metamask/gator-cli')
+  .name('gator')
   .description(
     'ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts',
   )
@@ -49,9 +49,9 @@ program
   )
   .action(status);
 
-// grantPermission
+// grant
 program
-  .command('grantPermission')
+  .command('grant')
   .description('Create, sign, and store a delegation with a predefined scope')
   .requiredOption('--delegate <address>', 'Delegate address')
   .requiredOption(
@@ -85,7 +85,7 @@ program
   // Ownership transfer
   .option('--contractAddress <address>', 'Contract for ownership transfer')
   .action((opts) => {
-    grantPermission({
+    grant({
       delegate: opts.delegate as Address,
       scope: opts.scope,
       tokenAddress: opts.tokenAddress as Address | undefined,
@@ -104,9 +104,9 @@ program
     });
   });
 
-// redeemPermission
+// redeem
 program
-  .command('redeemPermission')
+  .command('redeem')
   .description(
     'Redeem a delegation (scope-aware mode encodes calldata automatically)',
   )
@@ -138,7 +138,7 @@ program
     }
 
     if (opts.scope) {
-      redeemPermission({
+      redeem({
         delegator: opts.delegator as Address,
         scope: opts.scope,
         tokenAddress: opts.tokenAddress as Address | undefined,
@@ -152,7 +152,7 @@ program
         contractAddress: opts.contractAddress as Address | undefined,
       });
     } else {
-      redeemPermission({
+      redeem({
         delegator: opts.delegator as Address,
         target: opts.target as Address,
         callData: opts.callData as Hex,
@@ -161,13 +161,13 @@ program
     }
   });
 
-// revokePermission
+// revoke
 program
-  .command('revokePermission')
+  .command('revoke')
   .description('Revoke a delegation on-chain')
   .requiredOption('--delegate <address>', 'Delegate address to revoke')
   .action((opts) => {
-    revokePermission({ delegate: opts.delegate as Address });
+    revoke({ delegate: opts.delegate as Address });
   });
 
 // inspect

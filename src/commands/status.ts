@@ -4,7 +4,7 @@ import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 
 export async function status() {
   if (!configExists()) {
-    throw new Error('Not initialized. Run `@metamask/gator-cli init` first.');
+    throw new Error('Not initialized. Run `gator init` first.');
   }
 
   const config = loadConfig();

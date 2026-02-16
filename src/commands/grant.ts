@@ -12,7 +12,7 @@ import { buildScope } from '../lib/scopes.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 import type { GrantOptions } from '../types.js';
 
-export async function grantPermission(opts: GrantOptions) {
+export async function grant(opts: GrantOptions) {
   const config = loadConfig();
   const account = privateKeyToAccount(config.account.privateKey);
 

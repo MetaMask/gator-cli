@@ -18,7 +18,7 @@ function isScopeMode(opts: RedeemOptions): opts is RedeemScopeOptions {
   return 'scope' in opts && typeof opts.scope === 'string';
 }
 
-export async function redeemPermission(opts: RedeemOptions) {
+export async function redeem(opts: RedeemOptions) {
   const config = loadConfig();
   const account = privateKeyToAccount(config.account.privateKey);
 

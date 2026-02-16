@@ -7,7 +7,7 @@ import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 import { DelegationManager } from '@metamask/smart-accounts-kit/contracts';
 import type { RevokeOptions } from '../types.js';
 
-export async function revokePermission(opts: RevokeOptions) {
+export async function revoke(opts: RevokeOptions) {
   const config = loadConfig();
   const account = privateKeyToAccount(config.account.privateKey);
 
