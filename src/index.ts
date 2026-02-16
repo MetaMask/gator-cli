@@ -15,7 +15,7 @@ import { commaSplit } from './lib/utils.js';
 const program = new Command();
 
 program
-  .name('gator-cli')
+  .name('@metamask/gator-cli')
   .description(
     'ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts',
   )

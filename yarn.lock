@@ -702,6 +702,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/gator-cli@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@metamask/gator-cli@workspace:."
+  dependencies:
+    "@metamask/smart-accounts-kit": "npm:^0.3.0"
+    "@types/node": "npm:^22.0.0"
+    "@vitest/coverage-istanbul": "npm:^4.0.18"
+    commander: "npm:^12.1.0"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-packagejson: "npm:^2.5.8"
+    tsx: "npm:^4.19.0"
+    typedoc: "npm:^0.26.11"
+    typescript: "npm:~5.7.3"
+    viem: "npm:^2.21.0"
+    vite: "npm:^6.4.1"
+    vitest: "npm:^4.0.18"
+  bin:
+    gator-cli: ./dist/index.js
+  languageName: unknown
+  linkType: soft
+
 "@metamask/smart-accounts-kit@npm:^0.3.0":
   version: 0.3.0
   resolution: "@metamask/smart-accounts-kit@npm:0.3.0"
@@ -1878,27 +1899,6 @@ __metadata:
   conditions: os=darwin
   languageName: node
   linkType: hard
-
-"gator@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "gator@workspace:."
-  dependencies:
-    "@metamask/smart-accounts-kit": "npm:^0.3.0"
-    "@types/node": "npm:^22.0.0"
-    "@vitest/coverage-istanbul": "npm:^4.0.18"
-    commander: "npm:^12.1.0"
-    prettier: "npm:^3.3.3"
-    prettier-plugin-packagejson: "npm:^2.5.8"
-    tsx: "npm:^4.19.0"
-    typedoc: "npm:^0.26.11"
-    typescript: "npm:~5.7.3"
-    viem: "npm:^2.21.0"
-    vite: "npm:^6.4.1"
-    vitest: "npm:^4.0.18"
-  bin:
-    gator: ./dist/index.js
-  languageName: unknown
-  linkType: soft
 
 "gensync@npm:^1.0.0-beta.2":
   version: 1.0.0-beta.2

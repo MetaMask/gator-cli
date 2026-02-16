@@ -9,7 +9,7 @@ export function configExists(): boolean {
 export function loadConfig(): PermissionsConfig {
   if (!configExists()) {
     throw new Error(
-      `${CONFIG_FILE} not found. Run \`gator-cli init\` first.`,
+      `${CONFIG_FILE} not found. Run \`@metamask/gator-cli init\` first.`,
     );
   }
   const raw = readFileSync(CONFIG_FILE, 'utf-8');

@@ -9,7 +9,7 @@ import type { CreateOptions, PermissionsConfig } from '../types.js';
 
 export async function init(opts: CreateOptions) {
   if (configExists()) {
-    throw new Error('Account already exists. Run `gator-cli show` to view.');
+    throw new Error('Account already exists. Run `@metamask/gator-cli show` to view.');
   }
 
   const chain = opts.chain
@@ -41,7 +41,7 @@ export async function init(opts: CreateOptions) {
   console.log(`  Chain:    ${chain.name} (${chain.id})`);
   console.log(`  Config:   ${CONFIG_FILE}`);
   console.log(
-    `\nFund this address with native token, then run \`gator-cli create\` to upgrade to EIP-7702.`,
+    `\nFund this address with native token, then run \`@metamask/gator-cli create\` to upgrade to EIP-7702.`,
   );
   console.log(
     `Also configure delegationStorage.apiKey, apiKeyId, and bundlerUrl in ${CONFIG_FILE}`,
