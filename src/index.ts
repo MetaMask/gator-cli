@@ -5,6 +5,7 @@ import { init } from './commands/init.js';
 import { create } from './commands/create.js';
 import { show } from './commands/show.js';
 import { status } from './commands/status.js';
+import { balance } from './commands/balance.js';
 import { grant } from './commands/grant.js';
 import { redeem } from './commands/redeem.js';
 import { revoke } from './commands/revoke.js';
@@ -58,6 +59,18 @@ program
   .option('--profile <name>', 'Profile name', 'default')
   .action((opts) => {
     status({ profile: opts.profile });
+  });
+
+program
+  .command('balance')
+  .description('Show native balance (and optional ERC-20 balance)')
+  .option('--tokenAddress <address>', 'ERC-20 token contract address')
+  .option('--profile <name>', 'Profile name', 'default')
+  .action((opts) => {
+    balance({
+      profile: opts.profile,
+      tokenAddress: opts.tokenAddress as Address | undefined,
+    });
   });
 
 // grant

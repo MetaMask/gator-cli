@@ -85,3 +85,7 @@ export interface InspectOptions extends ProfileOptions {
 export interface CreateOptions extends ProfileOptions {
   chain?: string;
 }
+
+export interface BalanceOptions extends ProfileOptions {
+  tokenAddress?: Address;
+}

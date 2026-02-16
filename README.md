@@ -40,6 +40,7 @@ gator inspect
 | `create`  | Upgrade EOA to an EIP-7702 smart account      |
 | `show`    | Display the EOA address                       |
 | `status`  | Check config and on-chain account status      |
+| `balance` | Show native or ERC-20 balance                 |
 | `grant`   | Create, sign, and store a delegation          |
 | `redeem`  | Redeem a delegation (scope-aware or raw mode) |
 | `revoke`  | Revoke a delegation on-chain                  |
@@ -118,6 +119,16 @@ gator redeem \
 | `nativeTokenStreaming`      | `--to`, `--amount`                    |
 | `functionCall`              | `--target`, `--function`, `--args`    |
 | `ownershipTransfer`         | `--contractAddress`, `--to`           |
+
+## Balance
+
+```bash
+# Native balance
+gator balance
+
+# ERC-20 balance
+gator balance --tokenAddress 0xUSDC
+```
 
 ## Configuration
 
