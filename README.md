@@ -69,12 +69,12 @@ Run `@metamask/gator-cli help <command>` for full flag details.
 ```bash
 # Transfer 10 USDC using a delegation from 0xALICE
 @metamask/gator-cli redeemPermission \
-  --delegator 0xALICE --scope erc20TransferAmount \
+  --delegator 0xALICE --scope erc20Transfer \
   --tokenAddress 0xUSDC --to 0xCHARLIE --amount 10
 
 # Send 0.5 ETH
 @metamask/gator-cli redeemPermission \
-  --delegator 0xALICE --scope nativeTokenTransferAmount \
+  --delegator 0xALICE --scope nativeTransfer \
   --to 0xCHARLIE --amount 0.5
 
 # Call a contract function
@@ -93,17 +93,13 @@ Run `@metamask/gator-cli help <command>` for full flag details.
 
 ### Redeem Flags per Scope
 
-| Scope                       | Required Flags                        |
-| --------------------------- | ------------------------------------- |
-| `erc20TransferAmount`       | `--tokenAddress`, `--to`, `--amount`  |
-| `erc20PeriodTransfer`       | `--tokenAddress`, `--to`, `--amount`  |
-| `erc20Streaming`            | `--tokenAddress`, `--to`, `--amount`  |
-| `erc721Transfer`            | `--tokenAddress`, `--to`, `--tokenId` |
-| `nativeTokenTransferAmount` | `--to`, `--amount`                    |
-| `nativeTokenPeriodTransfer` | `--to`, `--amount`                    |
-| `nativeTokenStreaming`      | `--to`, `--amount`                    |
-| `functionCall`              | `--target`, `--function`, `--args`    |
-| `ownershipTransfer`         | `--contractAddress`, `--to`           |
+| Scope               | Required Flags                        |
+| ------------------- | ------------------------------------- |
+| `erc20Transfer`     | `--tokenAddress`, `--to`, `--amount`  |
+| `erc721Transfer`    | `--tokenAddress`, `--to`, `--tokenId` |
+| `nativeTransfer`    | `--to`, `--amount`                    |
+| `functionCall`      | `--target`, `--function`, `--args`    |
+| `ownershipTransfer` | `--contractAddress`, `--to`           |
 
 ## Configuration
 

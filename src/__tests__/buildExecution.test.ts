@@ -21,7 +21,7 @@ const CONTRACT = '0x0000000000000000000000000000000000000001' as const;
 const mockPublicClient = {} as PublicClient;
 
 function makeOpts(overrides: Partial<RedeemScopeOptions>): RedeemScopeOptions {
-  return { delegator: DELEGATOR, scope: 'erc20TransferAmount', ...overrides };
+  return { delegator: DELEGATOR, scope: 'erc20Transfer', ...overrides };
 }
 
 // -------------------------------------------------------------------------
@@ -39,21 +39,21 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('Unknown scope type');
   });
 
-  it('throws when erc20 scope is missing tokenAddress', async () => {
+  it('throws when erc20Transfer scope is missing tokenAddress', async () => {
     await expect(
       buildExecution(
-        makeOpts({ scope: 'erc20TransferAmount', to: RECIPIENT, amount: '10' }),
+        makeOpts({ scope: 'erc20Transfer', to: RECIPIENT, amount: '10' }),
         DELEGATOR,
         mockPublicClient,
       ),
     ).rejects.toThrow('--tokenAddress required');
   });
 
-  it('throws when erc20 scope is missing to', async () => {
+  it('throws when erc20Transfer scope is missing to', async () => {
     await expect(
       buildExecution(
         makeOpts({
-          scope: 'erc20TransferAmount',
+          scope: 'erc20Transfer',
           tokenAddress: TOKEN,
           amount: '10',
         }),
@@ -63,11 +63,11 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('--to required');
   });
 
-  it('throws when erc20 scope is missing amount', async () => {
+  it('throws when erc20Transfer scope is missing amount', async () => {
     await expect(
       buildExecution(
         makeOpts({
-          scope: 'erc20TransferAmount',
+          scope: 'erc20Transfer',
           tokenAddress: TOKEN,
           to: RECIPIENT,
         }),
@@ -77,20 +77,20 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('--amount required');
   });
 
-  it('throws when native scope is missing to', async () => {
+  it('throws when nativeTransfer scope is missing to', async () => {
     await expect(
       buildExecution(
-        makeOpts({ scope: 'nativeTokenTransferAmount', amount: '1' }),
+        makeOpts({ scope: 'nativeTransfer', amount: '1' }),
         DELEGATOR,
         mockPublicClient,
       ),
     ).rejects.toThrow('--to required');
   });
 
-  it('throws when native scope is missing amount', async () => {
+  it('throws when nativeTransfer scope is missing amount', async () => {
     await expect(
       buildExecution(
-        makeOpts({ scope: 'nativeTokenTransferAmount', to: RECIPIENT }),
+        makeOpts({ scope: 'nativeTransfer', to: RECIPIENT }),
         DELEGATOR,
         mockPublicClient,
       ),
@@ -183,11 +183,11 @@ describe('buildExecution – validation', () => {
 // ERC-20 transfers (mocked decimals = 6)
 // -------------------------------------------------------------------------
 
-describe('buildExecution – erc20TransferAmount', () => {
+describe('buildExecution – erc20Transfer', () => {
   it('encodes ERC-20 transfer with correct decimals', async () => {
     const result = await buildExecution(
       makeOpts({
-        scope: 'erc20TransferAmount',
+        scope: 'erc20Transfer',
         tokenAddress: TOKEN,
         to: RECIPIENT,
         amount: '10',
@@ -208,33 +208,15 @@ describe('buildExecution – erc20TransferAmount', () => {
   });
 });
 
-describe('buildExecution – erc20PeriodTransfer', () => {
-  it('encodes same as erc20TransferAmount', async () => {
-    const result = await buildExecution(
-      makeOpts({
-        scope: 'erc20PeriodTransfer',
-        tokenAddress: TOKEN,
-        to: RECIPIENT,
-        amount: '5',
-      }),
-      DELEGATOR,
-      mockPublicClient,
-    );
-
-    expect(result.target).toBe(TOKEN);
-    expect(result.value).toBe(0n);
-  });
-});
-
 // -------------------------------------------------------------------------
 // Native token transfers
 // -------------------------------------------------------------------------
 
-describe('buildExecution – nativeTokenTransferAmount', () => {
+describe('buildExecution – nativeTransfer', () => {
   it('sets target to recipient with parsed value', async () => {
     const result = await buildExecution(
       makeOpts({
-        scope: 'nativeTokenTransferAmount',
+        scope: 'nativeTransfer',
         to: RECIPIENT,
         amount: '1.5',
       }),
@@ -245,24 +227,6 @@ describe('buildExecution – nativeTokenTransferAmount', () => {
     expect(result.target).toBe(RECIPIENT);
     expect(result.callData).toBe('0x');
     expect(result.value).toBe(parseEther('1.5'));
-  });
-});
-
-describe('buildExecution – nativeTokenPeriodTransfer', () => {
-  it('encodes same as nativeTokenTransferAmount', async () => {
-    const result = await buildExecution(
-      makeOpts({
-        scope: 'nativeTokenPeriodTransfer',
-        to: RECIPIENT,
-        amount: '0.1',
-      }),
-      DELEGATOR,
-      mockPublicClient,
-    );
-
-    expect(result.target).toBe(RECIPIENT);
-    expect(result.callData).toBe('0x');
-    expect(result.value).toBe(parseEther('0.1'));
   });
 });
 
