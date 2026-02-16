@@ -9,7 +9,9 @@ import type { CreateOptions, PermissionsConfig } from '../types.js';
 
 export async function init(opts: CreateOptions) {
   if (configExists()) {
-    throw new Error('Account already exists. Run `@metamask/gator-cli show` to view.');
+    throw new Error(
+      'Account already exists. Run `@metamask/gator-cli show` to view.',
+    );
   }
 
   const chain = opts.chain

@@ -1,6 +1,7 @@
 # @metamask/gator-cli
 
 ## Installation
+
 Yarn:
 
 ```sh
@@ -32,16 +33,16 @@ yarn install @metamask/gator-cli
 
 ## Commands
 
-| Command            | Description                                          |
-| ------------------ | ---------------------------------------------------- |
-| `init`             | Generate a private key and save config               |
-| `create`           | Upgrade EOA to an EIP-7702 smart account             |
-| `show`             | Display the EOA address                              |
-| `status`           | Check config and on-chain account status             |
-| `grantPermission`  | Create, sign, and store a delegation                 |
-| `redeemPermission` | Redeem a delegation via UserOperation                |
-| `revokePermission` | Revoke a delegation on-chain                         |
-| `inspect`          | View delegations for your account                    |
+| Command            | Description                                   |
+| ------------------ | --------------------------------------------- |
+| `init`             | Generate a private key and save config        |
+| `create`           | Upgrade EOA to an EIP-7702 smart account      |
+| `show`             | Display the EOA address                       |
+| `status`           | Check config and on-chain account status      |
+| `grantPermission`  | Create, sign, and store a delegation          |
+| `redeemPermission` | Redeem a delegation (scope-aware or raw mode) |
+| `revokePermission` | Revoke a delegation on-chain                  |
+| `inspect`          | View delegations for your account             |
 
 Run `@metamask/gator-cli help <command>` for full flag details.
 
@@ -58,6 +59,51 @@ Run `@metamask/gator-cli help <command>` for full flag details.
 | `nativeTokenStreaming`      | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                   |
 | `functionCall`              | `--targets`, `--selectors`                                              |
 | `ownershipTransfer`         | `--contractAddress`                                                     |
+
+## Redeeming Permissions
+
+`redeemPermission` supports two modes:
+
+**Scope-aware mode** -- the CLI encodes calldata for you:
+
+```bash
+# Transfer 10 USDC using a delegation from 0xALICE
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --scope erc20TransferAmount \
+  --tokenAddress 0xUSDC --to 0xCHARLIE --amount 10
+
+# Send 0.5 ETH
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --scope nativeTokenTransferAmount \
+  --to 0xCHARLIE --amount 0.5
+
+# Call a contract function
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --scope functionCall \
+  --target 0xUSDC --function "approve(address,uint256)" \
+  --args "0xSPENDER,1000000"
+```
+
+**Raw mode** -- pass pre-encoded calldata directly:
+
+```bash
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --target 0xUSDC --callData 0xa9059cbb...
+```
+
+### Redeem Flags per Scope
+
+| Scope                       | Required Flags                        |
+| --------------------------- | ------------------------------------- |
+| `erc20TransferAmount`       | `--tokenAddress`, `--to`, `--amount`  |
+| `erc20PeriodTransfer`       | `--tokenAddress`, `--to`, `--amount`  |
+| `erc20Streaming`            | `--tokenAddress`, `--to`, `--amount`  |
+| `erc721Transfer`            | `--tokenAddress`, `--to`, `--tokenId` |
+| `nativeTokenTransferAmount` | `--to`, `--amount`                    |
+| `nativeTokenPeriodTransfer` | `--to`, `--amount`                    |
+| `nativeTokenStreaming`      | `--to`, `--amount`                    |
+| `functionCall`              | `--target`, `--function`, `--args`    |
+| `ownershipTransfer`         | `--contractAddress`, `--to`           |
 
 ## Configuration
 
@@ -78,7 +124,6 @@ Then run `@metamask/gator-cli create` to upgrade the EOA to an EIP-7702 smart ac
 ## Documentation
 
 [Head to the MetaMask Smart Accounts Kit documentation](https://docs.metamask.io/smart-accounts-kit/) to learn more about the delegation framework.
-
 
 ## Useful Links
 

@@ -15,8 +15,13 @@ import {
   getBundlerClient,
 } from '../lib/clients.js';
 import { getStorageClient } from '../lib/storage.js';
+import { buildExecution } from '../lib/executions.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
-import type { RedeemOptions } from '../types.js';
+import type { RedeemOptions, RedeemScopeOptions } from '../types.js';
+
+function isScopeMode(opts: RedeemOptions): opts is RedeemScopeOptions {
+  return 'scope' in opts && typeof opts.scope === 'string';
+}
 
 export async function redeemPermission(opts: RedeemOptions) {
   const config = loadConfig();
@@ -51,13 +56,24 @@ export async function redeemPermission(opts: RedeemOptions) {
 
   const delegationChain = await storageClient.getDelegationChain(matching[0]!);
 
-  const executions = [
-    createExecution({
+  let execution: {
+    target: `0x${string}`;
+    callData: `0x${string}`;
+    value: bigint;
+  };
+
+  if (isScopeMode(opts)) {
+    console.log(`  Building ${opts.scope} execution...`);
+    execution = await buildExecution(opts, opts.delegator, publicClient);
+  } else {
+    execution = {
       target: opts.target,
       callData: opts.callData,
       value: opts.value ? parseEther(opts.value) : 0n,
-    }),
-  ];
+    };
+  }
+
+  const executions = [createExecution(execution)];
 
   const redeemCalldata = DelegationManager.encode.redeemDelegations({
     delegations: [delegationChain],

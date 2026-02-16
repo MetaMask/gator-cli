@@ -43,12 +43,31 @@ export interface GrantOptions {
   contractAddress?: Address;
 }
 
-export interface RedeemOptions {
+export interface RedeemScopeOptions {
+  delegator: Address;
+  scope: string;
+  // ERC-20 / ERC-721 transfers
+  tokenAddress?: Address;
+  to?: Address;
+  amount?: string;
+  tokenId?: string;
+  // Function call scope
+  target?: Address;
+  function?: string;
+  args?: string[];
+  value?: string;
+  // Ownership transfer
+  contractAddress?: Address;
+}
+
+export interface RedeemRawOptions {
   delegator: Address;
   target: Address;
   callData: Hex;
   value?: string;
 }
+
+export type RedeemOptions = RedeemScopeOptions | RedeemRawOptions;
 
 export interface RevokeOptions {
   delegate: Address;
