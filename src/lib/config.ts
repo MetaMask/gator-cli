@@ -1,5 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { CONFIG_FILE } from './constants.js';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { CONFIG_DIR, CONFIG_FILE } from './constants.js';
 import type { PermissionsConfig } from '../types.js';
 
 export function configExists(): boolean {
@@ -9,7 +9,7 @@ export function configExists(): boolean {
 export function loadConfig(): PermissionsConfig {
   if (!configExists()) {
     throw new Error(
-      `❌ ${CONFIG_FILE} not found. Run \`permissions-cli create\` first.`,
+      `${CONFIG_FILE} not found. Run \`gator-cli init\` first.`,
     );
   }
   const raw = readFileSync(CONFIG_FILE, 'utf-8');
@@ -17,5 +17,6 @@ export function loadConfig(): PermissionsConfig {
 }
 
 export function saveConfig(config: PermissionsConfig): void {
+  mkdirSync(CONFIG_DIR, { recursive: true });
   writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2) + '\n');
 }

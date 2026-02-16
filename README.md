@@ -15,7 +15,7 @@ yarn build
 
 ### `init`
 
-Generate a private key and save to `permissions.json`. Fund the address before upgrading.
+Generate a private key and save to `~/.gator-cli/permissions.json`. Fund the address before upgrading.
 
 ```bash
 gator-cli init                    # Default: Base
@@ -147,7 +147,7 @@ gator-cli inspect --delegate 0xBOB         # To specific delegate
 
 ## Configuration
 
-After `init`, edit `permissions.json` to add:
+After `init`, edit `~/.gator-cli/permissions.json` to add:
 
 ```json
 {

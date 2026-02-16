@@ -120,6 +120,6 @@ export async function buildScope(
     }
 
     default:
-      throw new Error(`❌ Unknown scope type: ${opts.scope}`);
+      throw new Error(`Unknown scope type: ${opts.scope}`);
   }
 }

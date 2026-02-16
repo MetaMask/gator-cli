@@ -24,7 +24,6 @@ export async function grantPermission(opts: GrantOptions) {
   const publicClient = getPublicClient(chain);
   const walletClient = getWalletClient(account, chain);
 
-  // Create delegator smart account
   const delegatorSmartAccount = await toMetaMaskSmartAccount({
     client: publicClient,
     implementation: Implementation.Stateless7702,
@@ -32,12 +31,10 @@ export async function grantPermission(opts: GrantOptions) {
     signer: { walletClient },
   });
 
-  // Build scope from CLI flags (auto-reads token decimals)
-  console.log(`🐊 Building ${opts.scope} scope...`);
+  console.log(`Building ${opts.scope} scope...`);
   const scope = await buildScope(opts, publicClient);
 
-  // Create delegation (scope → caveats handled internally by SDK)
-  console.log('   Creating delegation...');
+  console.log('  Creating delegation...');
   const delegation = createDelegation({
     scope,
     to: opts.delegate,
@@ -46,20 +43,17 @@ export async function grantPermission(opts: GrantOptions) {
     salt: toHex(crypto.getRandomValues(new Uint8Array(32))),
   });
 
-  // Sign delegation
-  console.log('   Signing...');
+  console.log('  Signing...');
   const signature = await delegatorSmartAccount.signDelegation({ delegation });
   const signedDelegation = { ...delegation, signature };
 
-  // Store delegation
-  console.log('   Storing...');
+  console.log('  Storing...');
   const storageClient = getStorageClient(config);
-  console.log(signedDelegation);
   const delegationHash = await storageClient.storeDelegation(signedDelegation);
 
-  console.log(`\n✅ Permission granted and stored`);
-  console.log(`   Hash:      ${delegationHash}`);
-  console.log(`   Scope:     ${opts.scope}`);
-  console.log(`   Delegator: ${account.address}`);
-  console.log(`   Delegate:  ${opts.delegate}`);
+  console.log(`\nPermission granted and stored`);
+  console.log(`  Hash:      ${delegationHash}`);
+  console.log(`  Scope:     ${opts.scope}`);
+  console.log(`  Delegator: ${account.address}`);
+  console.log(`  Delegate:  ${opts.delegate}`);
 }

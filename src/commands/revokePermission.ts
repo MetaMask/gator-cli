@@ -28,8 +28,7 @@ export async function revokePermission(opts: RevokeOptions) {
   const walletClient = getWalletClient(account, chain);
   const storageClient = getStorageClient(config);
 
-  // Lookup delegations given by us to the delegate
-  console.log(`🐊 Looking up delegations to ${opts.delegate}...`);
+  console.log(`Looking up delegations to ${opts.delegate}...`);
   const given = await storageClient.fetchDelegations(account.address, 'GIVEN');
 
   const matching = given.filter(
@@ -37,20 +36,17 @@ export async function revokePermission(opts: RevokeOptions) {
   );
 
   if (matching.length === 0) {
-    console.error(`❌ No delegation found to ${opts.delegate}`);
-    process.exit(1);
+    throw new Error(`No delegation found to ${opts.delegate}`);
   }
 
   console.log(
-    `   Found ${matching.length} delegation(s). Revoking first match.`,
+    `  Found ${matching.length} delegation(s). Revoking first match.`,
   );
 
-  // Build disable delegation calldata
   const disableCalldata = DelegationManager.encode.disableDelegation({
     delegation: matching[0]!,
   });
 
-  // Send via smart account
   const smartAccount = await toMetaMaskSmartAccount({
     client: publicClient,
     implementation: Implementation.Stateless7702,
@@ -60,7 +56,7 @@ export async function revokePermission(opts: RevokeOptions) {
 
   const bundlerClient = getBundlerClient(config, chain);
 
-  console.log('   Submitting revocation...');
+  console.log('  Submitting revocation...');
   const userOpHash = await bundlerClient.sendUserOperation({
     account: smartAccount,
     calls: [
@@ -71,6 +67,6 @@ export async function revokePermission(opts: RevokeOptions) {
     ],
   });
 
-  console.log(`\n✅ Permission revoked`);
-  console.log(`   UserOp Hash: ${userOpHash}`);
+  console.log(`\nPermission revoked`);
+  console.log(`  UserOp Hash: ${userOpHash}`);
 }

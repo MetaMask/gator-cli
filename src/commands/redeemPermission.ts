@@ -31,8 +31,7 @@ export async function redeemPermission(opts: RedeemOptions) {
   const walletClient = getWalletClient(account, chain);
   const storageClient = getStorageClient(config);
 
-  // Step 1: Lookup delegations received by us
-  console.log(`🐊 Looking up delegations from ${opts.delegator}...`);
+  console.log(`Looking up delegations from ${opts.delegator}...`);
   const received = await storageClient.fetchDelegations(
     account.address,
     'RECEIVED',
@@ -43,18 +42,15 @@ export async function redeemPermission(opts: RedeemOptions) {
   );
 
   if (matching.length === 0) {
-    console.error(
-      `❌ No delegation found from ${opts.delegator} → ${account.address}`,
+    throw new Error(
+      `No delegation found from ${opts.delegator} to ${account.address}`,
     );
-    process.exit(1);
   }
 
-  console.log(`   Found ${matching.length} delegation(s). Using first match.`);
+  console.log(`  Found ${matching.length} delegation(s). Using first match.`);
 
-  // Step 2: Get the full delegation chain
   const delegationChain = await storageClient.getDelegationChain(matching[0]!);
 
-  // Step 3: Build execution
   const executions = [
     createExecution({
       target: opts.target,
@@ -63,14 +59,12 @@ export async function redeemPermission(opts: RedeemOptions) {
     }),
   ];
 
-  // Step 4: Encode redeem calldata
   const redeemCalldata = DelegationManager.encode.redeemDelegations({
     delegations: [delegationChain],
     modes: [ExecutionMode.SingleDefault],
     executions: [executions],
   });
 
-  // Step 5: Send UserOp as delegate
   const delegateSmartAccount = await toMetaMaskSmartAccount({
     client: publicClient,
     implementation: Implementation.Stateless7702,
@@ -80,7 +74,7 @@ export async function redeemPermission(opts: RedeemOptions) {
 
   const bundlerClient = getBundlerClient(config, chain);
 
-  console.log('   Sending UserOperation...');
+  console.log('  Sending UserOperation...');
   const userOpHash = await bundlerClient.sendUserOperation({
     account: delegateSmartAccount,
     calls: [
@@ -91,6 +85,6 @@ export async function redeemPermission(opts: RedeemOptions) {
     ],
   });
 
-  console.log(`\n✅ Permission redeemed`);
-  console.log(`   UserOp Hash: ${userOpHash}`);
+  console.log(`\nPermission redeemed`);
+  console.log(`  UserOp Hash: ${userOpHash}`);
 }

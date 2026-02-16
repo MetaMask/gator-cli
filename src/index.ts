@@ -25,7 +25,7 @@ program
 program
   .command('init')
   .description(
-    'Generate a private key and save to permissions.json (fund before upgrading)',
+    'Generate a private key and save to ~/.gator-cli/permissions.json (fund before upgrading)',
   )
   .option('--chain <chain>', 'Target chain (base, sepolia)', 'base')
   .action(init);
@@ -44,7 +44,7 @@ program.command('show').description('Display the EOA address').action(show);
 // status
 program
   .command('status')
-  .description('Check if permissions.json exists and show account details')
+  .description('Check if ~/.gator-cli/permissions.json exists and show account details')
   .action(status);
 
 // grantPermission
