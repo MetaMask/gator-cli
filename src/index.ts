@@ -15,7 +15,7 @@ import { commaSplit } from './lib/utils.js';
 const program = new Command();
 
 program
-  .name('gator-cli')
+  .name('@metamask/gator-cli')
   .description(
     'ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts',
   )
@@ -25,7 +25,7 @@ program
 program
   .command('init')
   .description(
-    'Generate a private key and save to permissions.json (fund before upgrading)',
+    'Generate a private key and save to ~/.gator-cli/permissions.json (fund before upgrading)',
   )
   .option('--chain <chain>', 'Target chain (base, sepolia)', 'base')
   .action(init);
@@ -44,7 +44,9 @@ program.command('show').description('Display the EOA address').action(show);
 // status
 program
   .command('status')
-  .description('Check if permissions.json exists and show account details')
+  .description(
+    'Check if ~/.gator-cli/permissions.json exists and show account details',
+  )
   .action(status);
 
 // grantPermission
@@ -54,7 +56,7 @@ program
   .requiredOption('--delegate <address>', 'Delegate address')
   .requiredOption(
     '--scope <type>',
-    'Scope type: erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenPeriodTransfer, nativeTokenStreaming, functionCall, ownershipTransfer',
+    'Scope type: erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, functionCall, ownershipTransfer',
   )
   // Token scopes
   .option('--tokenAddress <address>', 'ERC-20/721 token contract address')
@@ -106,19 +108,57 @@ program
 program
   .command('redeemPermission')
   .description(
-    'Redeem a delegation (looks up by delegator+delegate from storage)',
+    'Redeem a delegation (scope-aware mode encodes calldata automatically)',
   )
   .requiredOption('--delegator <address>', 'Delegator address')
-  .requiredOption('--target <address>', 'Target contract address for execution')
-  .requiredOption('--callData <hex>', 'Calldata for execution')
+  // Scope-aware mode
+  .option(
+    '--scope <type>',
+    'Scope type (uses human-readable flags instead of raw calldata)',
+  )
+  .option('--to <address>', 'Recipient address for transfers')
+  .option('--amount <amount>', 'Amount to transfer (human readable)')
+  .option('--tokenAddress <address>', 'ERC-20/721 token contract address')
+  .option('--tokenId <id>', 'ERC-721 token ID')
+  .option(
+    '--function <sig>',
+    'Function signature (e.g. "approve(address,uint256)")',
+  )
+  .option('--args <values>', 'Function arguments (comma-separated)', commaSplit)
+  .option('--contractAddress <address>', 'Contract for ownership transfer')
+  // Raw mode (fallback)
+  .option('--target <address>', 'Target contract address (raw mode)')
+  .option('--callData <hex>', 'Calldata for execution (raw mode)')
   .option('--value <ether>', 'Native token value to send')
   .action((opts) => {
-    redeemPermission({
-      delegator: opts.delegator as Address,
-      target: opts.target as Address,
-      callData: opts.callData as Hex,
-      value: opts.value,
-    });
+    if (!opts.scope && (!opts.target || !opts.callData)) {
+      throw new Error(
+        'Provide --scope for human-readable mode, or --target and --callData for raw mode.',
+      );
+    }
+
+    if (opts.scope) {
+      redeemPermission({
+        delegator: opts.delegator as Address,
+        scope: opts.scope,
+        tokenAddress: opts.tokenAddress as Address | undefined,
+        to: opts.to as Address | undefined,
+        amount: opts.amount,
+        tokenId: opts.tokenId,
+        target: opts.target as Address | undefined,
+        function: opts.function,
+        args: opts.args,
+        value: opts.value,
+        contractAddress: opts.contractAddress as Address | undefined,
+      });
+    } else {
+      redeemPermission({
+        delegator: opts.delegator as Address,
+        target: opts.target as Address,
+        callData: opts.callData as Hex,
+        value: opts.value,
+      });
+    }
   });
 
 // revokePermission

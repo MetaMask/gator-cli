@@ -114,7 +114,7 @@ export function getStorageClient(config: PermissionsConfig) {
 
   if (!apiKey || !apiKeyId) {
     throw new Error(
-      '❌ Delegation storage not configured. Set apiKey and apiKeyId in permissions.json',
+      'Delegation storage not configured. Set apiKey and apiKeyId in ~/.gator-cli/permissions.json',
     );
   }
 

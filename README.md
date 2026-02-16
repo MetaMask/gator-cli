@@ -1,129 +1,50 @@
-# gator-cli 🐊
+# @metamask/gator-cli
 
-ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts.
+## Installation
 
-Built with [`@metamask/smart-accounts-kit`](https://docs.metamask.io/smart-accounts-kit/) and [viem](https://viem.sh/).
+Yarn:
 
-## Install
+```sh
+yarn install @metamask/gator-cli
+```
+
+## Quick Start
 
 ```bash
-yarn install
-yarn build
+# 1. Initialize — generates a key and saves config to ~/.gator-cli/permissions.json
+@metamask/gator-cli init
+@metamask/gator-cli init --chain baseSepolia   # or: sepolia
+
+# 2. Fund the address shown, then configure storage + bundler in ~/.gator-cli/permissions.json
+
+# 3. Upgrade to EIP-7702 smart account
+@metamask/gator-cli create
+
+# 4. Grant a permission
+@metamask/gator-cli grantPermission \
+  --delegate 0xBOB \
+  --scope erc20TransferAmount \
+  --tokenAddress 0xUSDC \
+  --maxAmount 50
+
+# 5. Inspect delegations
+@metamask/gator-cli inspect
 ```
 
 ## Commands
 
-### `init`
+| Command            | Description                                   |
+| ------------------ | --------------------------------------------- |
+| `init`             | Generate a private key and save config        |
+| `create`           | Upgrade EOA to an EIP-7702 smart account      |
+| `show`             | Display the EOA address                       |
+| `status`           | Check config and on-chain account status      |
+| `grantPermission`  | Create, sign, and store a delegation          |
+| `redeemPermission` | Redeem a delegation (scope-aware or raw mode) |
+| `revokePermission` | Revoke a delegation on-chain                  |
+| `inspect`          | View delegations for your account             |
 
-Generate a private key and save to `permissions.json`. Fund the address before upgrading.
-
-```bash
-gator-cli init                    # Default: Base
-gator-cli init --chain sepolia    # Sepolia testnet
-```
-
-### `create`
-
-Upgrade an existing EOA to an EIP-7702 smart account. Requires a funded account (run `init` first).
-
-```bash
-gator-cli create
-```
-
-### `show`
-
-Display the EOA address.
-
-```bash
-gator-cli show
-```
-
-### `status`
-
-Check account status — config, on-chain 7702 verification, storage & bundler config.
-
-```bash
-gator-cli status
-```
-
-### `grantPermission`
-
-Create, sign, and store a delegation with a predefined scope. Token decimals are auto-read from the contract.
-
-```bash
-# ERC-20 transfer limit (10 USDC)
-gator-cli grantPermission \
-  --delegate 0xBOB \
-  --scope erc20TransferAmount \
-  --tokenAddress 0xUSDC \
-  --maxAmount 10
-
-# Native token periodic (0.01 ETH/day)
-gator-cli grantPermission \
-  --delegate 0xBOB \
-  --scope nativeTokenPeriodTransfer \
-  --periodAmount 0.01 \
-  --periodDuration 86400
-
-# ERC-20 streaming
-gator-cli grantPermission \
-  --delegate 0xBOB \
-  --scope erc20Streaming \
-  --tokenAddress 0xUSDC \
-  --amountPerSecond 0.1 \
-  --initialAmount 10 \
-  --maxAmount 100
-
-# Function call (multiple targets & selectors)
-gator-cli grantPermission \
-  --delegate 0xBOB \
-  --scope functionCall \
-  --targets "0xAAA,0xBBB" \
-  --selectors "approve(address,uint256),transfer(address,uint256)"
-
-# Ownership transfer
-gator-cli grantPermission \
-  --delegate 0xBOB \
-  --scope ownershipTransfer \
-  --contractAddress 0xCONTRACT
-
-# ERC-721 transfer
-gator-cli grantPermission \
-  --delegate 0xBOB \
-  --scope erc721Transfer \
-  --tokenAddress 0xNFT \
-  --tokenId 42
-```
-
-### `redeemPermission`
-
-Redeem a delegation. Automatically looks up the delegation from storage by delegator+delegate pair.
-
-```bash
-gator-cli redeemPermission \
-  --delegator 0xALICE \
-  --target 0xUSDC \
-  --callData 0x... \
-  --value 0
-```
-
-### `revokePermission`
-
-Revoke a delegation on-chain.
-
-```bash
-gator-cli revokePermission --delegate 0xBOB
-```
-
-### `inspect`
-
-View delegations for your account.
-
-```bash
-gator-cli inspect                          # All delegations
-gator-cli inspect --delegator 0xALICE      # From specific delegator
-gator-cli inspect --delegate 0xBOB         # To specific delegate
-```
+Run `@metamask/gator-cli help <command>` for full flag details.
 
 ## Scopes
 
@@ -133,14 +54,60 @@ gator-cli inspect --delegate 0xBOB         # To specific delegate
 | `erc20PeriodTransfer`       | `--tokenAddress`, `--periodAmount`, `--periodDuration`                  |
 | `erc20Streaming`            | `--tokenAddress`, `--amountPerSecond`, `--initialAmount`, `--maxAmount` |
 | `erc721Transfer`            | `--tokenAddress`, `--tokenId`                                           |
+| `nativeTokenTransferAmount` | `--maxAmount`                                                           |
 | `nativeTokenPeriodTransfer` | `--periodAmount`, `--periodDuration`                                    |
 | `nativeTokenStreaming`      | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                   |
 | `functionCall`              | `--targets`, `--selectors`                                              |
 | `ownershipTransfer`         | `--contractAddress`                                                     |
 
+## Redeeming Permissions
+
+`redeemPermission` supports two modes:
+
+**Scope-aware mode** -- the CLI encodes calldata for you:
+
+```bash
+# Transfer 10 USDC using a delegation from 0xALICE
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --scope erc20TransferAmount \
+  --tokenAddress 0xUSDC --to 0xCHARLIE --amount 10
+
+# Send 0.5 ETH
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --scope nativeTokenTransferAmount \
+  --to 0xCHARLIE --amount 0.5
+
+# Call a contract function
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --scope functionCall \
+  --target 0xUSDC --function "approve(address,uint256)" \
+  --args "0xSPENDER,1000000"
+```
+
+**Raw mode** -- pass pre-encoded calldata directly:
+
+```bash
+@metamask/gator-cli redeemPermission \
+  --delegator 0xALICE --target 0xUSDC --callData 0xa9059cbb...
+```
+
+### Redeem Flags per Scope
+
+| Scope                       | Required Flags                        |
+| --------------------------- | ------------------------------------- |
+| `erc20TransferAmount`       | `--tokenAddress`, `--to`, `--amount`  |
+| `erc20PeriodTransfer`       | `--tokenAddress`, `--to`, `--amount`  |
+| `erc20Streaming`            | `--tokenAddress`, `--to`, `--amount`  |
+| `erc721Transfer`            | `--tokenAddress`, `--to`, `--tokenId` |
+| `nativeTokenTransferAmount` | `--to`, `--amount`                    |
+| `nativeTokenPeriodTransfer` | `--to`, `--amount`                    |
+| `nativeTokenStreaming`      | `--to`, `--amount`                    |
+| `functionCall`              | `--target`, `--function`, `--args`    |
+| `ownershipTransfer`         | `--contractAddress`, `--to`           |
+
 ## Configuration
 
-After `init`, edit `permissions.json` to add:
+After `@metamask/gator-cli init`, edit `~/.gator-cli/permissions.json` to add your delegation storage credentials and bundler URL:
 
 ```json
 {
@@ -152,8 +119,14 @@ After `init`, edit `permissions.json` to add:
 }
 ```
 
-Then run `gator-cli create` to upgrade the EOA to an EIP-7702 smart account.
+Then run `@metamask/gator-cli create` to upgrade the EOA to an EIP-7702 smart account.
 
-## License
+## Documentation
 
-MIT
+[Head to the MetaMask Smart Accounts Kit documentation](https://docs.metamask.io/smart-accounts-kit/) to learn more about the delegation framework.
+
+## Useful Links
+
+- [MetaMask Smart Accounts Kit Quick Start](https://docs.metamask.io/smart-accounts-kit/get-started/quickstart/)
+- [ERC-7710 Specification](https://eips.ethereum.org/EIPS/eip-7710)
+- [MetaMask Smart Accounts Kit docs](https://docs.metamask.io/smart-accounts-kit)

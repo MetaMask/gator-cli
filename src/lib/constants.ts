@@ -1,3 +1,5 @@
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { base, baseSepolia, sepolia } from 'viem/chains';
 import type { Chain } from 'viem';
 
@@ -16,4 +18,5 @@ export const DEFAULT_RPC: Record<number, string> = {
   [sepolia.id]: 'https://rpc.sepolia.org',
 };
 
-export const CONFIG_FILE = 'permissions.json';
+export const CONFIG_DIR = join(homedir(), '.gator-cli');
+export const CONFIG_FILE = join(CONFIG_DIR, 'permissions.json');

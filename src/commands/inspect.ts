@@ -9,8 +9,7 @@ export async function inspect(opts: InspectOptions) {
   const myAddress = config.account.address;
 
   if (!opts.delegator && !opts.delegate) {
-    // Show all delegations for our account
-    console.log(`🐊 Fetching all delegations for ${myAddress}...\n`);
+    console.log(`Fetching all delegations for ${myAddress}...\n`);
 
     const given = await storageClient.fetchDelegations(myAddress, 'GIVEN');
     const received = await storageClient.fetchDelegations(
@@ -18,21 +17,20 @@ export async function inspect(opts: InspectOptions) {
       'RECEIVED',
     );
 
-    console.log(`📤 Given (${given.length}):`);
+    console.log(`Given (${given.length}):`);
     for (const d of given) {
       printDelegation(d);
     }
 
-    console.log(`\n📥 Received (${received.length}):`);
+    console.log(`\nReceived (${received.length}):`);
     for (const d of received) {
       printDelegation(d);
     }
     return;
   }
 
-  // Filter by specific delegator or delegate
   if (opts.delegator) {
-    console.log(`🐊 Fetching delegations received from ${opts.delegator}...\n`);
+    console.log(`Fetching delegations received from ${opts.delegator}...\n`);
     const received = await storageClient.fetchDelegations(
       myAddress,
       'RECEIVED',
@@ -47,7 +45,7 @@ export async function inspect(opts: InspectOptions) {
   }
 
   if (opts.delegate) {
-    console.log(`🐊 Fetching delegations given to ${opts.delegate}...\n`);
+    console.log(`Fetching delegations given to ${opts.delegate}...\n`);
     const given = await storageClient.fetchDelegations(myAddress, 'GIVEN');
     const matching = given.filter(
       (d) => d.delegate.toLowerCase() === opts.delegate!.toLowerCase(),
@@ -60,7 +58,7 @@ export async function inspect(opts: InspectOptions) {
 }
 
 function printDelegation(d: Delegation) {
-  console.log(`  ─────────────────────────────`);
+  console.log(`  ---------------------------------`);
   console.log(`  Delegator:  ${d.delegator}`);
   console.log(`  Delegate:   ${d.delegate}`);
   console.log(`  Authority:  ${d.authority}`);
@@ -71,6 +69,6 @@ function printDelegation(d: Delegation) {
     }
   }
   if (d.signature) {
-    console.log(`  Signed:     ✅`);
+    console.log(`  Signed:     Yes`);
   }
 }
