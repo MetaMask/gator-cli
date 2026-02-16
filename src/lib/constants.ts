@@ -20,3 +20,5 @@ export const DEFAULT_RPC: Record<number, string> = {
 
 export const CONFIG_DIR = join(homedir(), '.gator-cli');
 export const CONFIG_FILE = join(CONFIG_DIR, 'permissions.json');
+export const PROFILE_CONFIG_DIR = join(CONFIG_DIR, 'profiles');
+export const DELEGATIONS_DIR = join(CONFIG_DIR, 'delegations');

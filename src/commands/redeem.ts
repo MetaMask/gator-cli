@@ -19,7 +19,7 @@ function isScopeMode(opts: RedeemOptions): opts is RedeemScopeOptions {
 }
 
 export async function redeem(opts: RedeemOptions) {
-  const config = loadConfig();
+  const config = loadConfig(opts.profile);
   const account = privateKeyToAccount(config.account.privateKey);
 
   const chain =
@@ -29,7 +29,7 @@ export async function redeem(opts: RedeemOptions) {
 
   const publicClient = getPublicClient(chain, config.rpcUrl);
   const walletClient = getWalletClient(account, chain, config.rpcUrl);
-  const storageClient = getStorageClient(config);
+  const storageClient = getStorageClient(config, opts.profile);
 
   console.log(`Looking up delegations from ${opts.delegator}...`);
   const received = await storageClient.fetchDelegations(

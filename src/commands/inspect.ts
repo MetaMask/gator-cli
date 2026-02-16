@@ -4,11 +4,11 @@ import { getStorageClient } from '../lib/storage.js';
 import type { InspectOptions } from '../types.js';
 
 export async function inspect(opts: InspectOptions) {
-  const config = loadConfig();
-  const storageClient = getStorageClient(config);
+  const config = loadConfig(opts.profile);
+  const storageClient = getStorageClient(config, opts.profile);
   const myAddress = config.account.address;
 
-  if (!opts.delegator && !opts.delegate) {
+  if (!opts.delegator && !opts.to) {
     console.log(`Fetching all delegations for ${myAddress}...\n`);
 
     const given = await storageClient.fetchDelegations(myAddress, 'GIVEN');
@@ -44,11 +44,11 @@ export async function inspect(opts: InspectOptions) {
     }
   }
 
-  if (opts.delegate) {
-    console.log(`Fetching delegations given to ${opts.delegate}...\n`);
+  if (opts.to) {
+    console.log(`Fetching delegations given to ${opts.to}...\n`);
     const given = await storageClient.fetchDelegations(myAddress, 'GIVEN');
     const matching = given.filter(
-      (d) => d.delegate.toLowerCase() === opts.delegate!.toLowerCase(),
+      (d) => d.delegate.toLowerCase() === opts.to!.toLowerCase(),
     );
     console.log(`Found ${matching.length} delegation(s):`);
     for (const d of matching) {

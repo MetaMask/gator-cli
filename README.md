@@ -11,9 +11,10 @@ yarn add @metamask/gator-cli
 ## Quick Start
 
 ```bash
-# 1. Initialize — generates a key and saves config to ~/.gator-cli/permissions.json
+# 1. Initialize — generates a key and saves config to ~/.gator-cli/permissions.json (default profile)
 gator init
 gator init --chain baseSepolia   # or: sepolia
+gator init --profile alice       # named profile
 
 # 2. Fund the address shown, then configure storage + rpcUrl in ~/.gator-cli/permissions.json
 
@@ -22,7 +23,7 @@ gator create
 
 # 4. Grant a permission
 gator grant \
-  --delegate 0xBOB \
+  --to 0xBOB \
   --scope erc20TransferAmount \
   --tokenAddress 0xUSDC \
   --maxAmount 50
@@ -45,6 +46,19 @@ gator inspect
 | `inspect` | View delegations for your account             |
 
 Run `gator help <command>` for full flag details.
+
+## Profiles
+
+By default, gator uses the `default` profile at `~/.gator-cli/permissions.json`.
+To use a named profile, pass `--profile <name>` to `init` and all other commands:
+
+```bash
+gator init --profile alice
+gator status --profile alice
+gator grant --profile alice --to 0xBOB --scope erc20TransferAmount --tokenAddress 0xUSDC --maxAmount 50
+```
+
+Named profiles are stored at `~/.gator-cli/profiles/<name>.json`.
 
 ## Scopes
 
@@ -107,7 +121,7 @@ gator redeem \
 
 ## Configuration
 
-After `gator init`, edit `~/.gator-cli/permissions.json` to add your delegation storage credentials and RPC URL:
+After `gator init`, edit the profile config to add your delegation storage credentials and RPC URL:
 
 ```json
 {
@@ -118,6 +132,9 @@ After `gator init`, edit `~/.gator-cli/permissions.json` to add your delegation 
   "rpcUrl": "https://your-rpc-url.com"
 }
 ```
+
+If `delegationStorage` is not configured, delegations are stored locally in
+`~/.gator-cli/delegations/<profile>.json`.
 
 Then run `gator create` to upgrade the EOA to an EIP-7702 smart account.
 

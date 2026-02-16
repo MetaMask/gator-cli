@@ -13,7 +13,7 @@ import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 import type { GrantOptions } from '../types.js';
 
 export async function grant(opts: GrantOptions) {
-  const config = loadConfig();
+  const config = loadConfig(opts.profile);
   const account = privateKeyToAccount(config.account.privateKey);
 
   const chain =
@@ -37,7 +37,7 @@ export async function grant(opts: GrantOptions) {
   console.log('  Creating delegation...');
   const delegation = createDelegation({
     scope,
-    to: opts.delegate,
+    to: opts.to,
     from: delegatorSmartAccount.address,
     environment: delegatorSmartAccount.environment,
     salt: toHex(crypto.getRandomValues(new Uint8Array(32))),
@@ -48,12 +48,12 @@ export async function grant(opts: GrantOptions) {
   const signedDelegation = { ...delegation, signature };
 
   console.log('  Storing...');
-  const storageClient = getStorageClient(config);
+  const storageClient = getStorageClient(config, opts.profile);
   const delegationHash = await storageClient.storeDelegation(signedDelegation);
 
   console.log(`\nPermission granted and stored`);
   console.log(`  Hash:      ${delegationHash}`);
   console.log(`  Scope:     ${opts.scope}`);
   console.log(`  Delegator: ${account.address}`);
-  console.log(`  Delegate:  ${opts.delegate}`);
+  console.log(`  Delegate:  ${opts.to}`);
 }

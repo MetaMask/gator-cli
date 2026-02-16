@@ -7,8 +7,11 @@ import {
   hexToBytes,
   concatBytes,
 } from 'viem';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import type { PermissionsConfig } from '../types.js';
 import { Delegation } from '@metamask/smart-accounts-kit';
+import { DELEGATIONS_DIR } from './constants.js';
 
 const DELEGATION_STORAGE_API_URL =
   'https://passkeys.dev-api.cx.metamask.io/api/v0';
@@ -35,6 +38,16 @@ interface StorageErrorResponse {
   error: string;
 }
 
+interface StoredDelegation {
+  hash: Hex;
+  delegation: Delegation;
+}
+
+interface LocalDelegationsFile {
+  version: number;
+  delegations: StoredDelegation[];
+}
+
 // ---------------------------------------------------------------------------
 // Delegation hash computation (replaces getDelegationHashOffchain from the SDK)
 // ---------------------------------------------------------------------------
@@ -54,6 +67,44 @@ function getCaveatsArrayHash(caveats: { enforcer: Hex; terms: Hex }[]): Hex {
   }
   const parts = caveats.map((c) => getCaveatHash(c));
   return keccak256(concatBytes(parts));
+}
+
+function jsonReplacer(_key: string, value: unknown): unknown {
+  return typeof value === 'bigint' || typeof value === 'number'
+    ? toHex(value)
+    : value;
+}
+
+function getLocalDelegationsPath(profile?: string): string {
+  const name = !profile || profile === 'default' ? 'default' : profile;
+  return join(DELEGATIONS_DIR, `${name}.json`);
+}
+
+function loadLocalDelegations(profile?: string): StoredDelegation[] {
+  const filePath = getLocalDelegationsPath(profile);
+  if (!existsSync(filePath)) {
+    return [];
+  }
+  const raw = readFileSync(filePath, 'utf-8');
+  const data = JSON.parse(raw) as LocalDelegationsFile | StoredDelegation[];
+  if (Array.isArray(data)) {
+    return data;
+  }
+  return Array.isArray(data.delegations) ? data.delegations : [];
+}
+
+function saveLocalDelegations(
+  profile: string | undefined,
+  delegations: StoredDelegation[],
+): void {
+  const filePath = getLocalDelegationsPath(profile);
+  mkdirSync(dirname(filePath), { recursive: true });
+  const body: LocalDelegationsFile = { version: 1, delegations };
+  writeFileSync(filePath, JSON.stringify(body, jsonReplacer, 2) + '\n');
+}
+
+function isZeroHash(value: Hex): boolean {
+  return value === '0x' || /^0x0+$/.test(value);
 }
 
 /**
@@ -109,13 +160,114 @@ function getHeaders(opts: StorageClientOptions): Record<string, string> {
 // Public API
 // ---------------------------------------------------------------------------
 
-export function getStorageClient(config: PermissionsConfig) {
-  const { apiKey, apiKeyId } = config.delegationStorage;
+export function getStorageClient(config: PermissionsConfig, profile?: string) {
+  const apiKey = config.delegationStorage?.apiKey ?? '';
+  const apiKeyId = config.delegationStorage?.apiKeyId ?? '';
 
   if (!apiKey || !apiKeyId) {
-    throw new Error(
-      'Delegation storage not configured. Set apiKey and apiKeyId in ~/.gator-cli/permissions.json',
-    );
+    return {
+      async storeDelegation(delegation: Delegation): Promise<Hex> {
+        if (!delegation.signature || delegation.signature === '0x') {
+          throw new Error('Delegation must be signed to be stored');
+        }
+
+        const expectedHash = getDelegationHash(delegation);
+        const delegations = loadLocalDelegations(profile);
+        const existingIndex = delegations.findIndex(
+          (stored) => stored.hash.toLowerCase() === expectedHash.toLowerCase(),
+        );
+
+        const entry = { hash: expectedHash, delegation };
+        if (existingIndex >= 0) {
+          delegations[existingIndex] = entry;
+        } else {
+          delegations.push(entry);
+        }
+
+        saveLocalDelegations(profile, delegations);
+        return expectedHash;
+      },
+
+      async fetchDelegations(
+        address: string,
+        filter: DelegationFilter = 'ALL',
+      ): Promise<Delegation[]> {
+        const delegations = loadLocalDelegations(profile);
+        const target = address.toLowerCase();
+
+        return delegations
+          .filter(({ delegation }) => {
+            const delegatorMatch =
+              delegation.delegator.toLowerCase() === target;
+            const delegateMatch = delegation.delegate.toLowerCase() === target;
+
+            if (filter === 'GIVEN') {
+              return delegatorMatch;
+            }
+            if (filter === 'RECEIVED') {
+              return delegateMatch;
+            }
+            return delegatorMatch || delegateMatch;
+          })
+          .map(({ delegation }) => delegation);
+      },
+
+      async getDelegationChain(
+        leafDelegationOrHash: Delegation | Hex,
+      ): Promise<Delegation[]> {
+        const delegations = loadLocalDelegations(profile);
+        const byHash = new Map(
+          delegations.map((entry) => [
+            entry.hash.toLowerCase(),
+            entry.delegation,
+          ]),
+        );
+
+        let leaf: Delegation | undefined;
+        if (typeof leafDelegationOrHash === 'string') {
+          leaf = byHash.get(leafDelegationOrHash.toLowerCase());
+          if (!leaf) {
+            throw new Error(
+              `Delegation ${leafDelegationOrHash} not found in local storage`,
+            );
+          }
+        } else {
+          leaf = leafDelegationOrHash;
+        }
+
+        const chain: Delegation[] = [];
+        let current = leaf;
+        while (current) {
+          chain.push(current);
+          const authority = current.authority as Hex;
+          if (!authority || isZeroHash(authority)) {
+            break;
+          }
+          const parent = byHash.get(authority.toLowerCase());
+          if (!parent) {
+            throw new Error(
+              `Delegation chain missing authority ${authority} in local storage`,
+            );
+          }
+          current = parent;
+        }
+
+        return chain;
+      },
+
+      async getDelegation(delegationHash: Hex): Promise<Delegation> {
+        const delegations = loadLocalDelegations(profile);
+        const match = delegations.find(
+          (entry) => entry.hash.toLowerCase() === delegationHash.toLowerCase(),
+        );
+        if (!match) {
+          throw new Error(
+            `Delegation ${delegationHash} not found in local storage`,
+          );
+        }
+        return match.delegation;
+      },
+    };
   }
 
   const opts: StorageClientOptions = {
@@ -138,10 +290,7 @@ export function getStorageClient(config: PermissionsConfig) {
 
       const body = JSON.stringify(
         { ...delegation, metadata: [] },
-        (_, value) =>
-          typeof value === 'bigint' || typeof value === 'number'
-            ? toHex(value)
-            : value,
+        jsonReplacer,
         2,
       );
 

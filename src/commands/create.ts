@@ -9,9 +9,10 @@ import { loadConfig, saveConfig } from '../lib/config.js';
 import { getPublicClient, getWalletClient } from '../lib/clients.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 import type { Chain } from 'viem';
+import type { CreateOptions } from '../types.js';
 
-export async function create() {
-  const config = loadConfig();
+export async function create(opts: CreateOptions) {
+  const config = loadConfig(opts.profile);
 
   if (config.account.upgraded) {
     throw new Error(
@@ -58,7 +59,7 @@ export async function create() {
 
   config.account.upgraded = true;
   config.account.upgradeTxHash = hash;
-  saveConfig(config);
+  saveConfig(config, opts.profile);
 
   console.log(`\nAccount upgraded to EIP-7702`);
   console.log(`  Address:  ${config.account.address}`);
