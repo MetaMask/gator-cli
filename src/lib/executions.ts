@@ -48,7 +48,9 @@ export async function buildExecution(
   publicClient: PublicClient,
 ): Promise<ExecutionResult> {
   switch (opts.scope) {
-    case 'erc20Transfer': {
+    case 'erc20TransferAmount':
+    case 'erc20PeriodTransfer':
+    case 'erc20Streaming': {
       if (!opts.tokenAddress) throw new Error('--tokenAddress required');
       if (!opts.to) throw new Error('--to required');
       if (!opts.amount) throw new Error('--amount required');
@@ -83,7 +85,9 @@ export async function buildExecution(
       };
     }
 
-    case 'nativeTransfer': {
+    case 'nativeTokenTransferAmount':
+    case 'nativeTokenPeriodTransfer':
+    case 'nativeTokenStreaming': {
       if (!opts.to) throw new Error('--to required');
       if (!opts.amount) throw new Error('--amount required');
 
