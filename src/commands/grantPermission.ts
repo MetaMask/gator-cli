@@ -21,8 +21,8 @@ export async function grantPermission(opts: GrantOptions) {
       (c) => c.id === config.account.chainId,
     ) ?? DEFAULT_CHAIN;
 
-  const publicClient = getPublicClient(chain);
-  const walletClient = getWalletClient(account, chain);
+  const publicClient = getPublicClient(chain, config.rpcUrl);
+  const walletClient = getWalletClient(account, chain, config.rpcUrl);
 
   const delegatorSmartAccount = await toMetaMaskSmartAccount({
     client: publicClient,

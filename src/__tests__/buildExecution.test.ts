@@ -39,7 +39,7 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('Unknown scope type');
   });
 
-  it('throws when erc20 scope is missing tokenAddress', async () => {
+  it('throws when erc20TransferAmount scope is missing tokenAddress', async () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'erc20TransferAmount', to: RECIPIENT, amount: '10' }),
@@ -49,7 +49,7 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('--tokenAddress required');
   });
 
-  it('throws when erc20 scope is missing to', async () => {
+  it('throws when erc20TransferAmount scope is missing to', async () => {
     await expect(
       buildExecution(
         makeOpts({
@@ -63,7 +63,7 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('--to required');
   });
 
-  it('throws when erc20 scope is missing amount', async () => {
+  it('throws when erc20TransferAmount scope is missing amount', async () => {
     await expect(
       buildExecution(
         makeOpts({
@@ -77,7 +77,7 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('--amount required');
   });
 
-  it('throws when native scope is missing to', async () => {
+  it('throws when nativeTokenTransferAmount scope is missing to', async () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'nativeTokenTransferAmount', amount: '1' }),
@@ -87,7 +87,7 @@ describe('buildExecution – validation', () => {
     ).rejects.toThrow('--to required');
   });
 
-  it('throws when native scope is missing amount', async () => {
+  it('throws when nativeTokenTransferAmount scope is missing amount', async () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'nativeTokenTransferAmount', to: RECIPIENT }),

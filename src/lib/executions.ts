@@ -1,6 +1,7 @@
 import {
   encodeFunctionData,
   erc20Abi,
+  erc721Abi,
   parseEther,
   parseUnits,
   toFunctionSelector,
@@ -14,20 +15,7 @@ import {
 import { getTokenDecimals } from './token.js';
 import type { RedeemScopeOptions } from '../types.js';
 
-const ERC721_TRANSFER_ABI = [
-  {
-    type: 'function',
-    name: 'transferFrom',
-    inputs: [
-      { name: 'from', type: 'address' },
-      { name: 'to', type: 'address' },
-      { name: 'tokenId', type: 'uint256' },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-] as const;
-
+// From https://github.com/OpenZeppelin/openzeppelin-contracts/blob/8ff78ffb6e78463f070eab59487b4ba30481b53c/contracts/access/Ownable.sol#L84
 const OWNABLE_ABI = [
   {
     type: 'function',
@@ -89,7 +77,7 @@ export async function buildExecution(
       return {
         target: opts.tokenAddress,
         callData: encodeFunctionData({
-          abi: ERC721_TRANSFER_ABI,
+          abi: erc721Abi,
           functionName: 'transferFrom',
           args: [delegator, opts.to, BigInt(opts.tokenId)],
         }),

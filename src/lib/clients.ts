@@ -8,34 +8,27 @@ import {
   type Transport,
   type Account,
 } from 'viem';
-import { createBundlerClient } from 'viem/account-abstraction';
-import type { PermissionsConfig } from '../types.js';
 import { DEFAULT_RPC } from './constants.js';
 
-export function getPublicClient(chain: Chain): PublicClient {
-  const rpcUrl = DEFAULT_RPC[chain.id] ?? chain.rpcUrls.default.http[0];
+function getRpcUrl(chain: Chain, rpcUrl?: string): string {
+  return rpcUrl || DEFAULT_RPC[chain.id] || chain.rpcUrls.default.http[0]!;
+}
+
+export function getPublicClient(chain: Chain, rpcUrl?: string): PublicClient {
   return createPublicClient({
     chain,
-    transport: http(rpcUrl),
+    transport: http(getRpcUrl(chain, rpcUrl)),
   });
 }
 
 export function getWalletClient(
   account: Account,
   chain: Chain,
+  rpcUrl?: string,
 ): WalletClient<Transport, Chain, Account> {
-  const rpcUrl = DEFAULT_RPC[chain.id] ?? chain.rpcUrls.default.http[0];
   return createWalletClient({
     account,
     chain,
-    transport: http(rpcUrl),
+    transport: http(getRpcUrl(chain, rpcUrl)),
   }) as WalletClient<Transport, Chain, Account>;
-}
-
-export function getBundlerClient(config: PermissionsConfig, chain: Chain) {
-  const publicClient = getPublicClient(chain);
-  return createBundlerClient({
-    client: publicClient,
-    transport: http(config.bundlerUrl),
-  });
 }
