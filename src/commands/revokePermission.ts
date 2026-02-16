@@ -4,14 +4,9 @@ import { loadConfig } from '../lib/config.js';
 import {
   getPublicClient,
   getWalletClient,
-  getBundlerClient,
 } from '../lib/clients.js';
 import { getStorageClient } from '../lib/storage.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
-import {
-  Implementation,
-  toMetaMaskSmartAccount,
-} from '@metamask/smart-accounts-kit';
 import { DelegationManager } from '@metamask/smart-accounts-kit/contracts';
 import type { RevokeOptions } from '../types.js';
 
@@ -47,26 +42,12 @@ export async function revokePermission(opts: RevokeOptions) {
     delegation: matching[0]!,
   });
 
-  const smartAccount = await toMetaMaskSmartAccount({
-    client: publicClient,
-    implementation: Implementation.Stateless7702,
-    address: account.address,
-    signer: { walletClient },
-  });
-
-  const bundlerClient = getBundlerClient(config, chain);
-
   console.log('  Submitting revocation...');
-  const userOpHash = await bundlerClient.sendUserOperation({
-    account: smartAccount,
-    calls: [
-      {
-        to: smartAccount.address,
-        data: disableCalldata,
-      },
-    ],
+  const txHash = await walletClient.sendTransaction({
+    to: account.address,
+    data: disableCalldata,
   });
 
   console.log(`\nPermission revoked`);
-  console.log(`  UserOp Hash: ${userOpHash}`);
+  console.log(`  Tx Hash: ${txHash}`);
 }

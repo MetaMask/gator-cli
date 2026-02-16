@@ -33,7 +33,7 @@ export async function init(opts: CreateOptions) {
       apiKey: '',
       apiKeyId: '',
     },
-    bundlerUrl: '',
+    rpcUrl: '',
   };
 
   saveConfig(config);

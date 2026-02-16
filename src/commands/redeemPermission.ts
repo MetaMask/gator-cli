@@ -1,10 +1,9 @@
 import { parseEther } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import {
-  Implementation,
-  toMetaMaskSmartAccount,
   createExecution,
   ExecutionMode,
+  getSmartAccountsEnvironment,
 } from '@metamask/smart-accounts-kit';
 import { DelegationManager } from '@metamask/smart-accounts-kit/contracts';
 
@@ -12,7 +11,6 @@ import { loadConfig } from '../lib/config.js';
 import {
   getPublicClient,
   getWalletClient,
-  getBundlerClient,
 } from '../lib/clients.js';
 import { getStorageClient } from '../lib/storage.js';
 import { buildExecution } from '../lib/executions.js';
@@ -81,26 +79,12 @@ export async function redeemPermission(opts: RedeemOptions) {
     executions: [executions],
   });
 
-  const delegateSmartAccount = await toMetaMaskSmartAccount({
-    client: publicClient,
-    implementation: Implementation.Stateless7702,
-    address: account.address,
-    signer: { walletClient },
-  });
-
-  const bundlerClient = getBundlerClient(config, chain);
-
-  console.log('  Sending UserOperation...');
-  const userOpHash = await bundlerClient.sendUserOperation({
-    account: delegateSmartAccount,
-    calls: [
-      {
-        to: delegateSmartAccount.address,
-        data: redeemCalldata,
-      },
-    ],
+  console.log('  Sending transaction...');
+  const txHash = await walletClient.sendTransaction({
+    to: getSmartAccountsEnvironment(chain.id).DelegationManager,
+    data: redeemCalldata,
   });
 
   console.log(`\nPermission redeemed`);
-  console.log(`  UserOp Hash: ${userOpHash}`);
+  console.log(`  Tx Hash: ${txHash}`);
 }

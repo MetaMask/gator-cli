@@ -41,6 +41,6 @@ export async function status() {
     `  Storage:      ${hasStorage ? 'Configured' : 'Not configured'}`,
   );
   console.log(
-    `  Bundler:      ${config.bundlerUrl ? config.bundlerUrl : 'Not configured'}`,
+    `  RPC URL:      ${config.rpcUrl ? 'Configured' : 'Not configured'}`,
   );
 }

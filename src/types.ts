@@ -17,7 +17,7 @@ export interface PermissionsConfig {
   version: number;
   account: AccountConfig;
   delegationStorage: DelegationStorageConfig;
-  bundlerUrl: string;
+  rpcUrl?: string;
 }
 
 export interface GrantOptions {
