@@ -1,10 +1,7 @@
 import { privateKeyToAccount } from 'viem/accounts';
 
 import { loadConfig } from '../lib/config.js';
-import {
-  getPublicClient,
-  getWalletClient,
-} from '../lib/clients.js';
+import { getWalletClient } from '../lib/clients.js';
 import { getStorageClient } from '../lib/storage.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 import { DelegationManager } from '@metamask/smart-accounts-kit/contracts';
@@ -19,8 +16,7 @@ export async function revokePermission(opts: RevokeOptions) {
       (c) => c.id === config.account.chainId,
     ) ?? DEFAULT_CHAIN;
 
-  const publicClient = getPublicClient(chain);
-  const walletClient = getWalletClient(account, chain);
+  const walletClient = getWalletClient(account, chain, config.rpcUrl);
   const storageClient = getStorageClient(config);
 
   console.log(`Looking up delegations to ${opts.delegate}...`);

@@ -14,7 +14,7 @@ export async function status() {
     Object.values(SUPPORTED_CHAINS).find((c) => c.id === chainId) ??
     DEFAULT_CHAIN;
 
-  const publicClient = getPublicClient(chain);
+  const publicClient = getPublicClient(chain, config.rpcUrl);
   let onChainUpgraded = false;
   try {
     const code = await publicClient.getCode({ address });

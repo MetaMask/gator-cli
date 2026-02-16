@@ -8,28 +8,27 @@ import {
   type Transport,
   type Account,
 } from 'viem';
-import { loadConfig } from './config.js';
 import { DEFAULT_RPC } from './constants.js';
 
-function getRpcUrl(chain: Chain): string {
-  const config = loadConfig();
-  return config.rpcUrl ?? DEFAULT_RPC[chain.id] ?? chain.rpcUrls.default.http[0]!;
+function getRpcUrl(chain: Chain, rpcUrl?: string): string {
+  return rpcUrl || DEFAULT_RPC[chain.id] || chain.rpcUrls.default.http[0]!;
 }
 
-export function getPublicClient(chain: Chain): PublicClient {
+export function getPublicClient(chain: Chain, rpcUrl?: string): PublicClient {
   return createPublicClient({
     chain,
-    transport: http(getRpcUrl(chain)),
+    transport: http(getRpcUrl(chain, rpcUrl)),
   });
 }
 
 export function getWalletClient(
   account: Account,
   chain: Chain,
+  rpcUrl?: string,
 ): WalletClient<Transport, Chain, Account> {
   return createWalletClient({
     account,
     chain,
-    transport: http(getRpcUrl(chain)),
+    transport: http(getRpcUrl(chain, rpcUrl)),
   }) as WalletClient<Transport, Chain, Account>;
 }

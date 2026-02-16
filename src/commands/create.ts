@@ -28,8 +28,8 @@ export async function create() {
   console.log(`  Address: ${config.account.address}`);
 
   const account = privateKeyToAccount(config.account.privateKey);
-  const publicClient = getPublicClient(chain);
-  const walletClient = getWalletClient(account, chain);
+  const publicClient = getPublicClient(chain, config.rpcUrl);
+  const walletClient = getWalletClient(account, chain, config.rpcUrl);
 
   const environment = getSmartAccountsEnvironment(chain.id);
   const contractAddress =

@@ -8,10 +8,7 @@ import {
 import { DelegationManager } from '@metamask/smart-accounts-kit/contracts';
 
 import { loadConfig } from '../lib/config.js';
-import {
-  getPublicClient,
-  getWalletClient,
-} from '../lib/clients.js';
+import { getPublicClient, getWalletClient } from '../lib/clients.js';
 import { getStorageClient } from '../lib/storage.js';
 import { buildExecution } from '../lib/executions.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
@@ -30,8 +27,8 @@ export async function redeemPermission(opts: RedeemOptions) {
       (c) => c.id === config.account.chainId,
     ) ?? DEFAULT_CHAIN;
 
-  const publicClient = getPublicClient(chain);
-  const walletClient = getWalletClient(account, chain);
+  const publicClient = getPublicClient(chain, config.rpcUrl);
+  const walletClient = getWalletClient(account, chain, config.rpcUrl);
   const storageClient = getStorageClient(config);
 
   console.log(`Looking up delegations from ${opts.delegator}...`);

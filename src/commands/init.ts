@@ -33,7 +33,6 @@ export async function init(opts: CreateOptions) {
       apiKey: '',
       apiKeyId: '',
     },
-    rpcUrl: '',
   };
 
   saveConfig(config);
@@ -46,6 +45,6 @@ export async function init(opts: CreateOptions) {
     `\nFund this address with native token, then run \`@metamask/gator-cli create\` to upgrade to EIP-7702.`,
   );
   console.log(
-    `Also configure delegationStorage.apiKey, apiKeyId, and bundlerUrl in ${CONFIG_FILE}`,
+    `Also configure delegationStorage.apiKey, apiKeyId, and rpcUrl in ${CONFIG_FILE}`,
   );
 }
