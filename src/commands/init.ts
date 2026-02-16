@@ -1,15 +1,19 @@
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { configExists, saveConfig } from "@/lib/config.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
-import type { CreateOptions, PermissionsConfig } from "@/types.js";
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { configExists, saveConfig } from '../lib/config.js';
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
+import type { CreateOptions, PermissionsConfig } from '../types.js';
 
 export async function init(opts: CreateOptions) {
   if (configExists()) {
-    console.error("❌ Account already exists. Run `permissions-cli show` to view.");
+    console.error(
+      '❌ Account already exists. Run `permissions-cli show` to view.',
+    );
     process.exit(1);
   }
 
-  const chain = opts.chain ? SUPPORTED_CHAINS[opts.chain] ?? DEFAULT_CHAIN : DEFAULT_CHAIN;
+  const chain = opts.chain
+    ? (SUPPORTED_CHAINS[opts.chain] ?? DEFAULT_CHAIN)
+    : DEFAULT_CHAIN;
 
   // Generate key
   const privateKey = generatePrivateKey();
@@ -25,10 +29,10 @@ export async function init(opts: CreateOptions) {
       chainId: chain.id,
     },
     delegationStorage: {
-      apiKey: "",
-      apiKeyId: "",
+      apiKey: '',
+      apiKeyId: '',
     },
-    bundlerUrl: "",
+    bundlerUrl: '',
   };
 
   saveConfig(config);
@@ -36,6 +40,10 @@ export async function init(opts: CreateOptions) {
   console.log(`\n✅ Account initialized`);
   console.log(`   Address:  ${account.address}`);
   console.log(`   Chain:    ${chain.name} (${chain.id})`);
-  console.log(`\n💰 Fund this address with native token, then run \`permissions-cli create\` to upgrade to EIP-7702.`);
-  console.log(`⚠️  Also configure delegationStorage.apiKey, apiKeyId, and bundlerUrl in permissions.json`);
+  console.log(
+    `\n💰 Fund this address with native token, then run \`permissions-cli create\` to upgrade to EIP-7702.`,
+  );
+  console.log(
+    `⚠️  Also configure delegationStorage.apiKey, apiKeyId, and bundlerUrl in permissions.json`,
+  );
 }

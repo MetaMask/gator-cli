@@ -7,10 +7,10 @@ import {
   type WalletClient,
   type Transport,
   type Account,
-} from "viem";
-import { createBundlerClient } from "viem/account-abstraction";
-import type { PermissionsConfig } from "@/types.js";
-import { DEFAULT_RPC } from "@/lib/constants.js";
+} from 'viem';
+import { createBundlerClient } from 'viem/account-abstraction';
+import type { PermissionsConfig } from '../types.js';
+import { DEFAULT_RPC } from './constants.js';
 
 export function getPublicClient(chain: Chain): PublicClient {
   const rpcUrl = DEFAULT_RPC[chain.id] ?? chain.rpcUrls.default.http[0];

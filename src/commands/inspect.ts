@@ -1,7 +1,7 @@
-import type { Delegation } from "@metamask/smart-accounts-kit";
-import { loadConfig } from "@/lib/config.js";
-import { getStorageClient } from "@/lib/storage.js";
-import type { InspectOptions } from "@/types.js";
+import type { Delegation } from '@metamask/smart-accounts-kit';
+import { loadConfig } from '../lib/config.js';
+import { getStorageClient } from '../lib/storage.js';
+import type { InspectOptions } from '../types.js';
 
 export async function inspect(opts: InspectOptions) {
   const config = loadConfig();
@@ -12,13 +12,10 @@ export async function inspect(opts: InspectOptions) {
     // Show all delegations for our account
     console.log(`🐊 Fetching all delegations for ${myAddress}...\n`);
 
-    const given = await storageClient.fetchDelegations(
-      myAddress,
-      "GIVEN",
-    );
+    const given = await storageClient.fetchDelegations(myAddress, 'GIVEN');
     const received = await storageClient.fetchDelegations(
       myAddress,
-      "RECEIVED",
+      'RECEIVED',
     );
 
     console.log(`📤 Given (${given.length}):`);
@@ -38,7 +35,7 @@ export async function inspect(opts: InspectOptions) {
     console.log(`🐊 Fetching delegations received from ${opts.delegator}...\n`);
     const received = await storageClient.fetchDelegations(
       myAddress,
-      "RECEIVED",
+      'RECEIVED',
     );
     const matching = received.filter(
       (d) => d.delegator.toLowerCase() === opts.delegator!.toLowerCase(),
@@ -51,10 +48,7 @@ export async function inspect(opts: InspectOptions) {
 
   if (opts.delegate) {
     console.log(`🐊 Fetching delegations given to ${opts.delegate}...\n`);
-    const given = await storageClient.fetchDelegations(
-      myAddress,
-      "GIVEN",
-    );
+    const given = await storageClient.fetchDelegations(myAddress, 'GIVEN');
     const matching = given.filter(
       (d) => d.delegate.toLowerCase() === opts.delegate!.toLowerCase(),
     );

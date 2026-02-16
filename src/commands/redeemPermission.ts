@@ -1,26 +1,31 @@
-import { parseEther } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { parseEther } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 import {
   Implementation,
   toMetaMaskSmartAccount,
   createExecution,
   ExecutionMode,
-} from "@metamask/smart-accounts-kit";
-import { DelegationManager } from "@metamask/smart-accounts-kit/contracts";
+} from '@metamask/smart-accounts-kit';
+import { DelegationManager } from '@metamask/smart-accounts-kit/contracts';
 
-import { loadConfig } from "@/lib/config.js";
-import { getPublicClient, getWalletClient, getBundlerClient } from "@/lib/clients.js";
-import { getStorageClient } from "@/lib/storage.js";
-import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from "@/lib/constants.js";
-import type { RedeemOptions } from "@/types.js";
+import { loadConfig } from '../lib/config.js';
+import {
+  getPublicClient,
+  getWalletClient,
+  getBundlerClient,
+} from '../lib/clients.js';
+import { getStorageClient } from '../lib/storage.js';
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
+import type { RedeemOptions } from '../types.js';
 
 export async function redeemPermission(opts: RedeemOptions) {
   const config = loadConfig();
   const account = privateKeyToAccount(config.account.privateKey);
 
   const chain =
-    Object.values(SUPPORTED_CHAINS).find((c) => c.id === config.account.chainId) ??
-    DEFAULT_CHAIN;
+    Object.values(SUPPORTED_CHAINS).find(
+      (c) => c.id === config.account.chainId,
+    ) ?? DEFAULT_CHAIN;
 
   const publicClient = getPublicClient(chain);
   const walletClient = getWalletClient(account, chain);
@@ -30,7 +35,7 @@ export async function redeemPermission(opts: RedeemOptions) {
   console.log(`🐊 Looking up delegations from ${opts.delegator}...`);
   const received = await storageClient.fetchDelegations(
     account.address,
-    "RECEIVED",
+    'RECEIVED',
   );
 
   const matching = received.filter(
@@ -75,7 +80,7 @@ export async function redeemPermission(opts: RedeemOptions) {
 
   const bundlerClient = getBundlerClient(config, chain);
 
-  console.log("   Sending UserOperation...");
+  console.log('   Sending UserOperation...');
   const userOpHash = await bundlerClient.sendUserOperation({
     account: delegateSmartAccount,
     calls: [

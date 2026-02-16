@@ -1,0 +1,9 @@
+{
+  "ignores": [
+    "@types/*",
+    "@vitest/coverage-istanbul",
+    "prettier-plugin-packagejson",
+    "typedoc",
+    "vite"
+  ]
+}
