@@ -33,6 +33,7 @@ export async function init(opts: CreateOptions) {
       apiKey: '',
       apiKeyId: '',
     },
+    rpcUrl: undefined,
   };
 
   saveConfig(config);
