@@ -58,6 +58,12 @@ gator-cli grantPermission \
   --tokenAddress 0xUSDC \
   --maxAmount 10
 
+# Native token transfer limit (0.1 ETH)
+gator-cli grantPermission \
+  --delegate 0xBOB \
+  --scope nativeTokenTransferAmount \
+  --maxAmount 0.1
+
 # Native token periodic (0.01 ETH/day)
 gator-cli grantPermission \
   --delegate 0xBOB \
@@ -133,6 +139,7 @@ gator-cli inspect --delegate 0xBOB         # To specific delegate
 | `erc20PeriodTransfer`       | `--tokenAddress`, `--periodAmount`, `--periodDuration`                  |
 | `erc20Streaming`            | `--tokenAddress`, `--amountPerSecond`, `--initialAmount`, `--maxAmount` |
 | `erc721Transfer`            | `--tokenAddress`, `--tokenId`                                           |
+| `nativeTokenTransferAmount` | `--maxAmount`                                                           |
 | `nativeTokenPeriodTransfer` | `--periodAmount`, `--periodDuration`                                    |
 | `nativeTokenStreaming`      | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                   |
 | `functionCall`              | `--targets`, `--selectors`                                              |

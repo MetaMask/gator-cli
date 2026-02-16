@@ -54,7 +54,7 @@ program
   .requiredOption('--delegate <address>', 'Delegate address')
   .requiredOption(
     '--scope <type>',
-    'Scope type: erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenPeriodTransfer, nativeTokenStreaming, functionCall, ownershipTransfer',
+    'Scope type: erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, functionCall, ownershipTransfer',
   )
   // Token scopes
   .option('--tokenAddress <address>', 'ERC-20/721 token contract address')

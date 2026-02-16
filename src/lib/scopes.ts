@@ -66,6 +66,14 @@ export async function buildScope(
       };
     }
 
+    case 'nativeTokenTransferAmount': {
+      if (!opts.maxAmount) throw new Error('--maxAmount required');
+      return {
+        type: 'nativeTokenTransferAmount' as const,
+        maxAmount: parseEther(opts.maxAmount),
+      };
+    }
+
     case 'nativeTokenPeriodTransfer': {
       if (!opts.periodAmount) throw new Error('--periodAmount required');
       if (!opts.periodDuration) throw new Error('--periodDuration required');
