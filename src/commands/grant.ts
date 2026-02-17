@@ -12,8 +12,8 @@ import { buildScope } from '../lib/scopes.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 import type { GrantOptions } from '../types.js';
 
-export async function grantPermission(opts: GrantOptions) {
-  const config = loadConfig();
+export async function grant(opts: GrantOptions) {
+  const config = loadConfig(opts.profile);
   const account = privateKeyToAccount(config.account.privateKey);
 
   const chain =
@@ -24,7 +24,7 @@ export async function grantPermission(opts: GrantOptions) {
   const publicClient = getPublicClient(chain, config.rpcUrl);
   const walletClient = getWalletClient(account, chain, config.rpcUrl);
 
-  const delegatorSmartAccount = await toMetaMaskSmartAccount({
+  const fromSmartAccount = await toMetaMaskSmartAccount({
     client: publicClient,
     implementation: Implementation.Stateless7702,
     address: account.address,
@@ -37,23 +37,23 @@ export async function grantPermission(opts: GrantOptions) {
   console.log('  Creating delegation...');
   const delegation = createDelegation({
     scope,
-    to: opts.delegate,
-    from: delegatorSmartAccount.address,
-    environment: delegatorSmartAccount.environment,
+    to: opts.to,
+    from: fromSmartAccount.address,
+    environment: fromSmartAccount.environment,
     salt: toHex(crypto.getRandomValues(new Uint8Array(32))),
   });
 
   console.log('  Signing...');
-  const signature = await delegatorSmartAccount.signDelegation({ delegation });
+  const signature = await fromSmartAccount.signDelegation({ delegation });
   const signedDelegation = { ...delegation, signature };
 
   console.log('  Storing...');
-  const storageClient = getStorageClient(config);
+  const storageClient = getStorageClient(config, opts.profile);
   const delegationHash = await storageClient.storeDelegation(signedDelegation);
 
   console.log(`\nPermission granted and stored`);
   console.log(`  Hash:      ${delegationHash}`);
   console.log(`  Scope:     ${opts.scope}`);
-  console.log(`  Delegator: ${account.address}`);
-  console.log(`  Delegate:  ${opts.delegate}`);
+  console.log(`  From:      ${account.address}`);
+  console.log(`  To:        ${opts.to}`);
 }

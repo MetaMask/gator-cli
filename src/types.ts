@@ -20,8 +20,12 @@ export interface PermissionsConfig {
   rpcUrl?: string;
 }
 
-export interface GrantOptions {
-  delegate: Address;
+export interface ProfileOptions {
+  profile?: string;
+}
+
+export interface GrantOptions extends ProfileOptions {
+  to: Address;
   scope: string;
   // Token scopes
   tokenAddress?: Address;
@@ -43,8 +47,8 @@ export interface GrantOptions {
   contractAddress?: Address;
 }
 
-export interface RedeemScopeOptions {
-  delegator: Address;
+export interface RedeemScopeOptions extends ProfileOptions {
+  from: Address;
   scope: string;
   // ERC-20 / ERC-721 transfers
   tokenAddress?: Address;
@@ -60,8 +64,8 @@ export interface RedeemScopeOptions {
   contractAddress?: Address;
 }
 
-export interface RedeemRawOptions {
-  delegator: Address;
+export interface RedeemRawOptions extends ProfileOptions {
+  from: Address;
   target: Address;
   callData: Hex;
   value?: string;
@@ -69,15 +73,19 @@ export interface RedeemRawOptions {
 
 export type RedeemOptions = RedeemScopeOptions | RedeemRawOptions;
 
-export interface RevokeOptions {
-  delegate: Address;
+export interface RevokeOptions extends ProfileOptions {
+  to: Address;
 }
 
-export interface InspectOptions {
-  delegator?: Address;
-  delegate?: Address;
+export interface InspectOptions extends ProfileOptions {
+  from?: Address;
+  to?: Address;
 }
 
-export interface CreateOptions {
+export interface CreateOptions extends ProfileOptions {
   chain?: string;
+}
+
+export interface BalanceOptions extends ProfileOptions {
+  tokenAddress?: Address;
 }

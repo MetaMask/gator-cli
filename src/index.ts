@@ -5,9 +5,10 @@ import { init } from './commands/init.js';
 import { create } from './commands/create.js';
 import { show } from './commands/show.js';
 import { status } from './commands/status.js';
-import { grantPermission } from './commands/grantPermission.js';
-import { redeemPermission } from './commands/redeemPermission.js';
-import { revokePermission } from './commands/revokePermission.js';
+import { balance } from './commands/balance.js';
+import { grant } from './commands/grant.js';
+import { redeem } from './commands/redeem.js';
+import { revoke } from './commands/revoke.js';
 import { inspect } from './commands/inspect.js';
 import type { Address, Hex } from 'viem';
 import { commaSplit } from './lib/utils.js';
@@ -15,7 +16,7 @@ import { commaSplit } from './lib/utils.js';
 const program = new Command();
 
 program
-  .name('@metamask/gator-cli')
+  .name('gator')
   .description(
     'ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts',
   )
@@ -24,11 +25,12 @@ program
 // init
 program
   .command('init')
-  .description(
-    'Generate a private key and save to ~/.gator-cli/permissions.json (fund before upgrading)',
-  )
+  .description('Generate a private key and save config (fund before upgrading)')
   .option('--chain <chain>', 'Target chain (base, sepolia)', 'base')
-  .action(init);
+  .option('--profile <name>', 'Profile name', 'default')
+  .action((opts) => {
+    init({ chain: opts.chain, profile: opts.profile });
+  });
 
 // create
 program
@@ -36,24 +38,47 @@ program
   .description(
     'Upgrade existing EOA to EIP-7702 smart account (requires funded account)',
   )
-  .action(create);
+  .option('--profile <name>', 'Profile name', 'default')
+  .action((opts) => {
+    create({ profile: opts.profile });
+  });
 
 // show
-program.command('show').description('Display the EOA address').action(show);
+program
+  .command('show')
+  .description('Display the EOA address')
+  .option('--profile <name>', 'Profile name', 'default')
+  .action((opts) => {
+    show({ profile: opts.profile });
+  });
 
 // status
 program
   .command('status')
-  .description(
-    'Check if ~/.gator-cli/permissions.json exists and show account details',
-  )
-  .action(status);
+  .description('Check if config exists and show account details')
+  .option('--profile <name>', 'Profile name', 'default')
+  .action((opts) => {
+    status({ profile: opts.profile });
+  });
 
-// grantPermission
 program
-  .command('grantPermission')
+  .command('balance')
+  .description('Show native balance (and optional ERC-20 balance)')
+  .option('--tokenAddress <address>', 'ERC-20 token contract address')
+  .option('--profile <name>', 'Profile name', 'default')
+  .action((opts) => {
+    balance({
+      profile: opts.profile,
+      tokenAddress: opts.tokenAddress as Address | undefined,
+    });
+  });
+
+// grant
+program
+  .command('grant')
   .description('Create, sign, and store a delegation with a predefined scope')
-  .requiredOption('--delegate <address>', 'Delegate address')
+  .requiredOption('--to <address>', 'Delegate address')
+  .option('--profile <name>', 'Profile name', 'default')
   .requiredOption(
     '--scope <type>',
     'Scope type: erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, functionCall, ownershipTransfer',
@@ -85,8 +110,9 @@ program
   // Ownership transfer
   .option('--contractAddress <address>', 'Contract for ownership transfer')
   .action((opts) => {
-    grantPermission({
-      delegate: opts.delegate as Address,
+    grant({
+      profile: opts.profile,
+      to: opts.to as Address,
       scope: opts.scope,
       tokenAddress: opts.tokenAddress as Address | undefined,
       maxAmount: opts.maxAmount,
@@ -104,13 +130,14 @@ program
     });
   });
 
-// redeemPermission
+// redeem
 program
-  .command('redeemPermission')
+  .command('redeem')
   .description(
     'Redeem a delegation (scope-aware mode encodes calldata automatically)',
   )
-  .requiredOption('--delegator <address>', 'Delegator address')
+  .requiredOption('--from <address>', 'From address')
+  .option('--profile <name>', 'Profile name', 'default')
   // Scope-aware mode
   .option(
     '--scope <type>',
@@ -138,8 +165,9 @@ program
     }
 
     if (opts.scope) {
-      redeemPermission({
-        delegator: opts.delegator as Address,
+      redeem({
+        profile: opts.profile,
+        from: opts.from as Address,
         scope: opts.scope,
         tokenAddress: opts.tokenAddress as Address | undefined,
         to: opts.to as Address | undefined,
@@ -152,8 +180,9 @@ program
         contractAddress: opts.contractAddress as Address | undefined,
       });
     } else {
-      redeemPermission({
-        delegator: opts.delegator as Address,
+      redeem({
+        profile: opts.profile,
+        from: opts.from as Address,
         target: opts.target as Address,
         callData: opts.callData as Hex,
         value: opts.value,
@@ -161,25 +190,28 @@ program
     }
   });
 
-// revokePermission
+// revoke
 program
-  .command('revokePermission')
+  .command('revoke')
   .description('Revoke a delegation on-chain')
-  .requiredOption('--delegate <address>', 'Delegate address to revoke')
+  .requiredOption('--to <address>', 'Delegate address to revoke')
+  .option('--profile <name>', 'Profile name', 'default')
   .action((opts) => {
-    revokePermission({ delegate: opts.delegate as Address });
+    revoke({ profile: opts.profile, to: opts.to as Address });
   });
 
 // inspect
 program
   .command('inspect')
   .description('Inspect delegations for your account')
-  .option('--delegator <address>', 'Filter by delegator address')
-  .option('--delegate <address>', 'Filter by delegate address')
+  .option('--from <address>', 'Filter by from address')
+  .option('--to <address>', 'Filter by delegate address')
+  .option('--profile <name>', 'Profile name', 'default')
   .action((opts) => {
     inspect({
-      delegator: opts.delegator as Address | undefined,
-      delegate: opts.delegate as Address | undefined,
+      profile: opts.profile,
+      from: opts.from as Address | undefined,
+      to: opts.to as Address | undefined,
     });
   });
 

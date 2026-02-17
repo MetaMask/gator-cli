@@ -719,7 +719,7 @@ __metadata:
     vite: "npm:^6.4.1"
     vitest: "npm:^4.0.18"
   bin:
-    gator-cli: ./dist/index.js
+    gator: ./dist/index.js
   languageName: unknown
   linkType: soft
 

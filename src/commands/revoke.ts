@@ -7,8 +7,8 @@ import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
 import { DelegationManager } from '@metamask/smart-accounts-kit/contracts';
 import type { RevokeOptions } from '../types.js';
 
-export async function revokePermission(opts: RevokeOptions) {
-  const config = loadConfig();
+export async function revoke(opts: RevokeOptions) {
+  const config = loadConfig(opts.profile);
   const account = privateKeyToAccount(config.account.privateKey);
 
   const chain =
@@ -17,17 +17,17 @@ export async function revokePermission(opts: RevokeOptions) {
     ) ?? DEFAULT_CHAIN;
 
   const walletClient = getWalletClient(account, chain, config.rpcUrl);
-  const storageClient = getStorageClient(config);
+  const storageClient = getStorageClient(config, opts.profile);
 
-  console.log(`Looking up delegations to ${opts.delegate}...`);
+  console.log(`Looking up delegations to ${opts.to}...`);
   const given = await storageClient.fetchDelegations(account.address, 'GIVEN');
 
   const matching = given.filter(
-    (d) => d.delegate.toLowerCase() === opts.delegate.toLowerCase(),
+    (d) => d.delegate.toLowerCase() === opts.to.toLowerCase(),
   );
 
   if (matching.length === 0) {
-    throw new Error(`No delegation found to ${opts.delegate}`);
+    throw new Error(`No delegation found to ${opts.to}`);
   }
 
   console.log(

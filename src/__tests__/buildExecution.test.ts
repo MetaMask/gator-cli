@@ -13,7 +13,7 @@ vi.mock('../lib/token.js', () => ({
   getTokenDecimals: vi.fn().mockResolvedValue(6),
 }));
 
-const DELEGATOR = '0xEC12d2450934E3c158129D0B387739506C789b07' as const;
+const FROM = '0xEC12d2450934E3c158129D0B387739506C789b07' as const;
 const RECIPIENT = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' as const;
 const TOKEN = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const;
 const CONTRACT = '0x0000000000000000000000000000000000000001' as const;
@@ -21,7 +21,7 @@ const CONTRACT = '0x0000000000000000000000000000000000000001' as const;
 const mockPublicClient = {} as PublicClient;
 
 function makeOpts(overrides: Partial<RedeemScopeOptions>): RedeemScopeOptions {
-  return { delegator: DELEGATOR, scope: 'erc20TransferAmount', ...overrides };
+  return { from: FROM, scope: 'erc20TransferAmount', ...overrides };
 }
 
 // -------------------------------------------------------------------------
@@ -33,7 +33,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'unknownScope' }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('Unknown scope type');
@@ -43,7 +43,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'erc20TransferAmount', to: RECIPIENT, amount: '10' }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--tokenAddress required');
@@ -57,7 +57,7 @@ describe('buildExecution – validation', () => {
           tokenAddress: TOKEN,
           amount: '10',
         }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--to required');
@@ -71,7 +71,7 @@ describe('buildExecution – validation', () => {
           tokenAddress: TOKEN,
           to: RECIPIENT,
         }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--amount required');
@@ -81,7 +81,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'nativeTokenTransferAmount', amount: '1' }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--to required');
@@ -91,7 +91,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'nativeTokenTransferAmount', to: RECIPIENT }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--amount required');
@@ -101,7 +101,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'erc721Transfer', to: RECIPIENT, tokenId: '1' }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--tokenAddress required');
@@ -115,7 +115,7 @@ describe('buildExecution – validation', () => {
           tokenAddress: TOKEN,
           tokenId: '1',
         }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--to required');
@@ -129,7 +129,7 @@ describe('buildExecution – validation', () => {
           tokenAddress: TOKEN,
           to: RECIPIENT,
         }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--tokenId required');
@@ -142,7 +142,7 @@ describe('buildExecution – validation', () => {
           scope: 'functionCall',
           function: 'approve(address,uint256)',
         }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--target required');
@@ -152,7 +152,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'functionCall', target: TOKEN }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--function required');
@@ -162,7 +162,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'ownershipTransfer', to: RECIPIENT }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--contractAddress required');
@@ -172,7 +172,7 @@ describe('buildExecution – validation', () => {
     await expect(
       buildExecution(
         makeOpts({ scope: 'ownershipTransfer', contractAddress: CONTRACT }),
-        DELEGATOR,
+        FROM,
         mockPublicClient,
       ),
     ).rejects.toThrow('--to required');
@@ -192,7 +192,7 @@ describe('buildExecution – erc20TransferAmount', () => {
         to: RECIPIENT,
         amount: '10',
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -217,7 +217,7 @@ describe('buildExecution – erc20PeriodTransfer', () => {
         to: RECIPIENT,
         amount: '5',
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -238,7 +238,7 @@ describe('buildExecution – nativeTokenTransferAmount', () => {
         to: RECIPIENT,
         amount: '1.5',
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -256,7 +256,7 @@ describe('buildExecution – nativeTokenPeriodTransfer', () => {
         to: RECIPIENT,
         amount: '0.1',
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -279,7 +279,7 @@ describe('buildExecution – erc721Transfer', () => {
         to: RECIPIENT,
         tokenId: '42',
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -303,7 +303,7 @@ describe('buildExecution – functionCall', () => {
         function: 'approve(address,uint256)',
         args: [RECIPIENT, '1000000'],
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -320,7 +320,7 @@ describe('buildExecution – functionCall', () => {
         target: CONTRACT,
         function: 'pause()',
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -337,7 +337,7 @@ describe('buildExecution – functionCall', () => {
         function: 'deposit()',
         value: '2.0',
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 
@@ -357,7 +357,7 @@ describe('buildExecution – ownershipTransfer', () => {
         contractAddress: CONTRACT,
         to: RECIPIENT,
       }),
-      DELEGATOR,
+      FROM,
       mockPublicClient,
     );
 

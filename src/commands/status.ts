@@ -1,13 +1,18 @@
 import { configExists, loadConfig } from '../lib/config.js';
 import { getPublicClient } from '../lib/clients.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
+import type { ProfileOptions } from '../types.js';
 
-export async function status() {
-  if (!configExists()) {
-    throw new Error('Not initialized. Run `@metamask/gator-cli init` first.');
+export async function status(opts: ProfileOptions) {
+  if (!configExists(opts.profile)) {
+    const profileArg =
+      opts.profile && opts.profile !== 'default'
+        ? ` --profile ${opts.profile}`
+        : '';
+    throw new Error(`Not initialized. Run \`gator init${profileArg}\` first.`);
   }
 
-  const config = loadConfig();
+  const config = loadConfig(opts.profile);
   const { address, chainId, upgraded, upgradeTxHash } = config.account;
 
   const chain =
