@@ -13,7 +13,7 @@ import {
   type AbiParameter,
 } from 'viem';
 import { getTokenDecimals } from './token.js';
-import type { RedeemScopeOptions } from '../types.js';
+import type { RedeemOptions } from '../types.js';
 
 // From https://github.com/OpenZeppelin/openzeppelin-contracts/blob/8ff78ffb6e78463f070eab59487b4ba30481b53c/contracts/access/Ownable.sol#L84
 const OWNABLE_ABI = [
@@ -43,14 +43,12 @@ export interface ExecutionResult {
 }
 
 export async function buildExecution(
-  opts: RedeemScopeOptions,
+  opts: RedeemOptions,
   from: Address,
   publicClient: PublicClient,
 ): Promise<ExecutionResult> {
-  switch (opts.scope) {
-    case 'erc20TransferAmount':
-    case 'erc20PeriodTransfer':
-    case 'erc20Streaming': {
+  switch (opts.action) {
+    case 'erc20Transfer': {
       if (!opts.tokenAddress) throw new Error('--tokenAddress required');
       if (!opts.to) throw new Error('--to required');
       if (!opts.amount) throw new Error('--amount required');
@@ -85,9 +83,7 @@ export async function buildExecution(
       };
     }
 
-    case 'nativeTokenTransferAmount':
-    case 'nativeTokenPeriodTransfer':
-    case 'nativeTokenStreaming': {
+    case 'nativeTransfer': {
       if (!opts.to) throw new Error('--to required');
       if (!opts.amount) throw new Error('--amount required');
 
@@ -146,7 +142,18 @@ export async function buildExecution(
       };
     }
 
+    case 'raw': {
+      if (!opts.target) throw new Error('--target required');
+      if (!opts.callData) throw new Error('--callData required');
+
+      return {
+        target: opts.target,
+        callData: opts.callData,
+        value: opts.value ? parseEther(opts.value) : 0n,
+      };
+    }
+
     default:
-      throw new Error(`Unknown scope type: ${opts.scope}`);
+      throw new Error(`Unknown action type: ${opts.action}`);
   }
 }

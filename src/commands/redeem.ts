@@ -1,4 +1,3 @@
-import { parseEther } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import {
   createExecution,
@@ -12,11 +11,7 @@ import { getPublicClient, getWalletClient } from '../lib/clients.js';
 import { getStorageClient } from '../lib/storage.js';
 import { buildExecution } from '../lib/executions.js';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from '../lib/constants.js';
-import type { RedeemOptions, RedeemScopeOptions } from '../types.js';
-
-function isScopeMode(opts: RedeemOptions): opts is RedeemScopeOptions {
-  return 'scope' in opts && typeof opts.scope === 'string';
-}
+import type { RedeemOptions } from '../types.js';
 
 export async function redeem(opts: RedeemOptions) {
   const config = loadConfig(opts.profile);
@@ -51,22 +46,8 @@ export async function redeem(opts: RedeemOptions) {
 
   const delegationChain = await storageClient.getDelegationChain(matching[0]!);
 
-  let execution: {
-    target: `0x${string}`;
-    callData: `0x${string}`;
-    value: bigint;
-  };
-
-  if (isScopeMode(opts)) {
-    console.log(`  Building ${opts.scope} execution...`);
-    execution = await buildExecution(opts, opts.from, publicClient);
-  } else {
-    execution = {
-      target: opts.target,
-      callData: opts.callData,
-      value: opts.value ? parseEther(opts.value) : 0n,
-    };
-  }
+  console.log(`  Building ${opts.action} execution...`);
+  const execution = await buildExecution(opts, opts.from, publicClient);
 
   const executions = [createExecution(execution)];
 
