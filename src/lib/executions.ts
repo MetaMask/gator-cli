@@ -44,7 +44,7 @@ export interface ExecutionResult {
 
 export async function buildExecution(
   opts: RedeemScopeOptions,
-  delegator: Address,
+  from: Address,
   publicClient: PublicClient,
 ): Promise<ExecutionResult> {
   switch (opts.scope) {
@@ -79,7 +79,7 @@ export async function buildExecution(
         callData: encodeFunctionData({
           abi: erc721Abi,
           functionName: 'transferFrom',
-          args: [delegator, opts.to, BigInt(opts.tokenId)],
+          args: [from, opts.to, BigInt(opts.tokenId)],
         }),
         value: 0n,
       };

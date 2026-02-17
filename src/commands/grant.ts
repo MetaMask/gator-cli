@@ -24,7 +24,7 @@ export async function grant(opts: GrantOptions) {
   const publicClient = getPublicClient(chain, config.rpcUrl);
   const walletClient = getWalletClient(account, chain, config.rpcUrl);
 
-  const delegatorSmartAccount = await toMetaMaskSmartAccount({
+  const fromSmartAccount = await toMetaMaskSmartAccount({
     client: publicClient,
     implementation: Implementation.Stateless7702,
     address: account.address,
@@ -38,13 +38,13 @@ export async function grant(opts: GrantOptions) {
   const delegation = createDelegation({
     scope,
     to: opts.to,
-    from: delegatorSmartAccount.address,
-    environment: delegatorSmartAccount.environment,
+    from: fromSmartAccount.address,
+    environment: fromSmartAccount.environment,
     salt: toHex(crypto.getRandomValues(new Uint8Array(32))),
   });
 
   console.log('  Signing...');
-  const signature = await delegatorSmartAccount.signDelegation({ delegation });
+  const signature = await fromSmartAccount.signDelegation({ delegation });
   const signedDelegation = { ...delegation, signature };
 
   console.log('  Storing...');
@@ -54,6 +54,6 @@ export async function grant(opts: GrantOptions) {
   console.log(`\nPermission granted and stored`);
   console.log(`  Hash:      ${delegationHash}`);
   console.log(`  Scope:     ${opts.scope}`);
-  console.log(`  Delegator: ${account.address}`);
-  console.log(`  Delegate:  ${opts.to}`);
+  console.log(`  From:      ${account.address}`);
+  console.log(`  To:        ${opts.to}`);
 }

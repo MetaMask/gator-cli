@@ -136,7 +136,7 @@ program
   .description(
     'Redeem a delegation (scope-aware mode encodes calldata automatically)',
   )
-  .requiredOption('--delegator <address>', 'Delegator address')
+  .requiredOption('--from <address>', 'From address')
   .option('--profile <name>', 'Profile name', 'default')
   // Scope-aware mode
   .option(
@@ -167,7 +167,7 @@ program
     if (opts.scope) {
       redeem({
         profile: opts.profile,
-        delegator: opts.delegator as Address,
+        from: opts.from as Address,
         scope: opts.scope,
         tokenAddress: opts.tokenAddress as Address | undefined,
         to: opts.to as Address | undefined,
@@ -182,7 +182,7 @@ program
     } else {
       redeem({
         profile: opts.profile,
-        delegator: opts.delegator as Address,
+        from: opts.from as Address,
         target: opts.target as Address,
         callData: opts.callData as Hex,
         value: opts.value,
@@ -204,13 +204,13 @@ program
 program
   .command('inspect')
   .description('Inspect delegations for your account')
-  .option('--delegator <address>', 'Filter by delegator address')
+  .option('--from <address>', 'Filter by from address')
   .option('--to <address>', 'Filter by delegate address')
   .option('--profile <name>', 'Profile name', 'default')
   .action((opts) => {
     inspect({
       profile: opts.profile,
-      delegator: opts.delegator as Address | undefined,
+      from: opts.from as Address | undefined,
       to: opts.to as Address | undefined,
     });
   });

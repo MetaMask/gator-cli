@@ -48,7 +48,7 @@ export interface GrantOptions extends ProfileOptions {
 }
 
 export interface RedeemScopeOptions extends ProfileOptions {
-  delegator: Address;
+  from: Address;
   scope: string;
   // ERC-20 / ERC-721 transfers
   tokenAddress?: Address;
@@ -65,7 +65,7 @@ export interface RedeemScopeOptions extends ProfileOptions {
 }
 
 export interface RedeemRawOptions extends ProfileOptions {
-  delegator: Address;
+  from: Address;
   target: Address;
   callData: Hex;
   value?: string;
@@ -78,7 +78,7 @@ export interface RevokeOptions extends ProfileOptions {
 }
 
 export interface InspectOptions extends ProfileOptions {
-  delegator?: Address;
+  from?: Address;
   to?: Address;
 }
 

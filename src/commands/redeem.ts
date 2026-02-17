@@ -31,19 +31,19 @@ export async function redeem(opts: RedeemOptions) {
   const walletClient = getWalletClient(account, chain, config.rpcUrl);
   const storageClient = getStorageClient(config, opts.profile);
 
-  console.log(`Looking up delegations from ${opts.delegator}...`);
+  console.log(`Looking up delegations from ${opts.from}...`);
   const received = await storageClient.fetchDelegations(
     account.address,
     'RECEIVED',
   );
 
   const matching = received.filter(
-    (d) => d.delegator.toLowerCase() === opts.delegator.toLowerCase(),
+    (d) => d.delegator.toLowerCase() === opts.from.toLowerCase(),
   );
 
   if (matching.length === 0) {
     throw new Error(
-      `No delegation found from ${opts.delegator} to ${account.address}`,
+      `No delegation found from ${opts.from} to ${account.address}`,
     );
   }
 
@@ -59,7 +59,7 @@ export async function redeem(opts: RedeemOptions) {
 
   if (isScopeMode(opts)) {
     console.log(`  Building ${opts.scope} execution...`);
-    execution = await buildExecution(opts, opts.delegator, publicClient);
+    execution = await buildExecution(opts, opts.from, publicClient);
   } else {
     execution = {
       target: opts.target,

@@ -8,7 +8,7 @@ export async function inspect(opts: InspectOptions) {
   const storageClient = getStorageClient(config, opts.profile);
   const myAddress = config.account.address;
 
-  if (!opts.delegator && !opts.to) {
+  if (!opts.from && !opts.to) {
     console.log(`Fetching all delegations for ${myAddress}...\n`);
 
     const given = await storageClient.fetchDelegations(myAddress, 'GIVEN');
@@ -29,14 +29,14 @@ export async function inspect(opts: InspectOptions) {
     return;
   }
 
-  if (opts.delegator) {
-    console.log(`Fetching delegations received from ${opts.delegator}...\n`);
+  if (opts.from) {
+    console.log(`Fetching delegations received from ${opts.from}...\n`);
     const received = await storageClient.fetchDelegations(
       myAddress,
       'RECEIVED',
     );
     const matching = received.filter(
-      (d) => d.delegator.toLowerCase() === opts.delegator!.toLowerCase(),
+      (d) => d.delegator.toLowerCase() === opts.from!.toLowerCase(),
     );
     console.log(`Found ${matching.length} delegation(s):`);
     for (const d of matching) {
@@ -59,8 +59,8 @@ export async function inspect(opts: InspectOptions) {
 
 function printDelegation(d: Delegation) {
   console.log(`  ---------------------------------`);
-  console.log(`  Delegator:  ${d.delegator}`);
-  console.log(`  Delegate:   ${d.delegate}`);
+  console.log(`  From:       ${d.delegator}`);
+  console.log(`  To:         ${d.delegate}`);
   console.log(`  Authority:  ${d.authority}`);
   if (d.caveats?.length) {
     console.log(`  Caveats:    ${d.caveats.length}`);

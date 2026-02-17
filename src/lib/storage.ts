@@ -197,17 +197,16 @@ export function getStorageClient(config: PermissionsConfig, profile?: string) {
 
         return delegations
           .filter(({ delegation }) => {
-            const delegatorMatch =
-              delegation.delegator.toLowerCase() === target;
+            const fromMatch = delegation.delegator.toLowerCase() === target;
             const delegateMatch = delegation.delegate.toLowerCase() === target;
 
             if (filter === 'GIVEN') {
-              return delegatorMatch;
+              return fromMatch;
             }
             if (filter === 'RECEIVED') {
               return delegateMatch;
             }
-            return delegatorMatch || delegateMatch;
+            return fromMatch || delegateMatch;
           })
           .map(({ delegation }) => delegation);
       },

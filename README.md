@@ -84,17 +84,17 @@ Named profiles are stored at `~/.gator-cli/profiles/<name>.json`.
 ```bash
 # Transfer 10 USDC using a delegation from 0xALICE
 gator redeem \
-  --delegator 0xALICE --scope erc20TransferAmount \
+  --from 0xALICE --scope erc20TransferAmount \
   --tokenAddress 0xUSDC --to 0xCHARLIE --amount 10
 
 # Send 0.5 ETH
 gator redeem \
-  --delegator 0xALICE --scope nativeTokenTransferAmount \
+  --from 0xALICE --scope nativeTokenTransferAmount \
   --to 0xCHARLIE --amount 0.5
 
 # Call a contract function
 gator redeem \
-  --delegator 0xALICE --scope functionCall \
+  --from 0xALICE --scope functionCall \
   --target 0xUSDC --function "approve(address,uint256)" \
   --args "0xSPENDER,1000000"
 ```
@@ -103,7 +103,7 @@ gator redeem \
 
 ```bash
 gator redeem \
-  --delegator 0xALICE --target 0xUSDC --callData 0xa9059cbb...
+  --from 0xALICE --target 0xUSDC --callData 0xa9059cbb...
 ```
 
 ### Redeem Flags per Scope
