@@ -1,6 +1,6 @@
 ---
 name: gator-cli
-description: Use when you need to operate the @metamask/gator-cli to initialize profiles, upgrade EOA to EIP-7702, grant/redeem/revoke ERC-7710 delegations, or inspect balances and delegations. Covers commands, required flags, scope-specific options, configuration locations, and common usage flows.
+description: Use when you need to operate the @metamask/gator-cli to initialize profiles, upgrade EOA to EIP-7702, grant, redeem, and revoke ERC-7710 delegations, or inspect balances and delegations. Covers commands, required flags, grant scopes, redeem action types, configuration locations, and common usage flows.
 ---
 
 ## Quick Reference
@@ -114,16 +114,20 @@ Grant flags per scope:
 
 ### redeem
 
-Redeem a stored delegation. Two modes:
+Redeem a stored delegation using a specific action type.
 
-Scope-aware mode:
+- `gator redeem --from <from-address> --action <type> [action flags] [--profile <profile-name>]`
 
-- `gator redeem --from <from-address> --scope <type> [scope flags] [--profile <profile-name>]`
-- Scope-aware flags: `--to`, `--amount`, `--tokenAddress`, `--tokenId`, `--function`, `--args`, `--contractAddress`
+Supported action types: `erc20Transfer`, `erc721Transfer`, `nativeTransfer`, `functionCall`, `ownershipTransfer`, `raw`
 
-Raw mode:
+Action-specific flags:
 
-- `gator redeem --from <from-address> --target <contract-address> --callData <hex> [--value <ether>] [--profile <profile-name>]`
+- `erc20Transfer`: `--tokenAddress`, `--to`, `--amount`
+- `erc721Transfer`: `--tokenAddress`, `--to`, `--tokenId`
+- `nativeTransfer`: `--to`, `--amount`
+- `functionCall`: `--target`, `--function`, `--args`, `--value`
+- `ownershipTransfer`: `--contractAddress`, `--to`
+- `raw`: `--target`, `--callData`, `--value`
 
 ### revoke
 
@@ -139,19 +143,16 @@ Inspect delegations for your account.
 - With no filters, prints both Given and Received.
 - Printed fields: From, To, Authority, Caveats count, Signed flag.
 
-## Redeem Flags per Scope
+## Redeem Flags per Action
 
-| Scope                       | Required Flags                        |
-| --------------------------- | ------------------------------------- |
-| `erc20TransferAmount`       | `--tokenAddress`, `--to`, `--amount`  |
-| `erc20PeriodTransfer`       | `--tokenAddress`, `--to`, `--amount`  |
-| `erc20Streaming`            | `--tokenAddress`, `--to`, `--amount`  |
-| `erc721Transfer`            | `--tokenAddress`, `--to`, `--tokenId` |
-| `nativeTokenTransferAmount` | `--to`, `--amount`                    |
-| `nativeTokenPeriodTransfer` | `--to`, `--amount`                    |
-| `nativeTokenStreaming`      | `--to`, `--amount`                    |
-| `functionCall`              | `--target`, `--function`, `--args`    |
-| `ownershipTransfer`         | `--contractAddress`, `--to`           |
+| Action              | Required Flags                        |
+| ------------------- | ------------------------------------- |
+| `erc20Transfer`     | `--tokenAddress`, `--to`, `--amount`  |
+| `erc721Transfer`    | `--tokenAddress`, `--to`, `--tokenId` |
+| `nativeTransfer`    | `--to`, `--amount`                    |
+| `functionCall`      | `--target`, `--function`, `--args`    |
+| `ownershipTransfer` | `--contractAddress`, `--to`           |
+| `raw`               | `--target`, `--callData`              |
 
 ## Example Flows
 
@@ -169,18 +170,25 @@ gator grant --profile <profile-name> --to <to-address> --scope erc20TransferAmou
   --tokenAddress <token-address> --maxAmount 50
 ```
 
-Redeem in scope-aware mode:
+Redeem an ERC-20 transfer:
 
 ```bash
-gator redeem --profile <profile-name> --from <from-address> --scope erc20TransferAmount \
+gator redeem --profile <profile-name> --from <from-address> --action erc20Transfer \
   --tokenAddress <token-address> --to <to-address> --amount 10
+```
+
+Redeem a native transfer:
+
+```bash
+gator redeem --profile <profile-name> --from <from-address> --action nativeTransfer \
+  --to <to-address> --amount 0.5
 ```
 
 Redeem in raw mode:
 
 ```bash
-gator redeem --profile <profile-name> --from <from-address> --target <contract-address> \
-  --callData 0xa9059cbb...
+gator redeem --profile <profile-name> --from <from-address> --action raw \
+  --target <contract-address> --callData 0xa9059cbb...
 ```
 
 Inspect delegations:
@@ -202,4 +210,4 @@ gator revoke --profile <profile-name> --to <to-address>
 - `--from` refers to the delegator address; `--to` refers to the delegate/recipient.
 - `--targets` and `--selectors` are comma-separated lists.
 - `--function` accepts a signature string like `"approve(address,uint256)"`.
-- Scope-aware redeem requires `--scope` or the command must include `--target` and `--callData`.
+- `--action` is required for `redeem` and must be one of: `erc20Transfer`, `erc721Transfer`, `nativeTransfer`, `functionCall`, `ownershipTransfer`, `raw`.
