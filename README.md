@@ -1,5 +1,7 @@
 # @metamask/gator-cli
 
+> **Alpha version:** This CLI stores your private key in a local JSON file (`~/.gator-cli/`). Do not use it with accounts holding significant funds.
+
 ## Installation
 
 Yarn:
