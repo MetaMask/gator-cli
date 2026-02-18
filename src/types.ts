@@ -47,31 +47,32 @@ export interface GrantOptions extends ProfileOptions {
   contractAddress?: Address;
 }
 
-export interface RedeemScopeOptions extends ProfileOptions {
+export type RedeemAction =
+  | 'erc20Transfer'
+  | 'erc721Transfer'
+  | 'nativeTransfer'
+  | 'functionCall'
+  | 'ownershipTransfer'
+  | 'raw';
+
+export interface RedeemOptions extends ProfileOptions {
   from: Address;
-  scope: string;
+  action: RedeemAction;
   // ERC-20 / ERC-721 transfers
   tokenAddress?: Address;
   to?: Address;
   amount?: string;
   tokenId?: string;
-  // Function call scope
+  // Function call
   target?: Address;
   function?: string;
   args?: string[];
   value?: string;
   // Ownership transfer
   contractAddress?: Address;
+  // Raw mode
+  callData?: Hex;
 }
-
-export interface RedeemRawOptions extends ProfileOptions {
-  from: Address;
-  target: Address;
-  callData: Hex;
-  value?: string;
-}
-
-export type RedeemOptions = RedeemScopeOptions | RedeemRawOptions;
 
 export interface RevokeOptions extends ProfileOptions {
   to: Address;

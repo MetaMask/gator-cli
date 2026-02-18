@@ -133,61 +133,46 @@ program
 // redeem
 program
   .command('redeem')
-  .description(
-    'Redeem a delegation (scope-aware mode encodes calldata automatically)',
+  .description('Redeem a delegation using a specific action type')
+  .requiredOption('--from <address>', 'Delegator address')
+  .requiredOption(
+    '--action <type>',
+    'Action type: erc20Transfer, erc721Transfer, nativeTransfer, functionCall, ownershipTransfer, raw',
   )
-  .requiredOption('--from <address>', 'From address')
   .option('--profile <name>', 'Profile name', 'default')
-  // Scope-aware mode
-  .option(
-    '--scope <type>',
-    'Scope type (uses human-readable flags instead of raw calldata)',
-  )
-  .option('--to <address>', 'Recipient address for transfers')
-  .option('--amount <amount>', 'Amount to transfer (human readable)')
+  // erc20Transfer / erc721Transfer
   .option('--tokenAddress <address>', 'ERC-20/721 token contract address')
+  .option('--to <address>', 'Recipient address')
+  .option('--amount <amount>', 'Amount to transfer (human readable)')
   .option('--tokenId <id>', 'ERC-721 token ID')
+  // functionCall
+  .option('--target <address>', 'Target contract address')
   .option(
     '--function <sig>',
     'Function signature (e.g. "approve(address,uint256)")',
   )
   .option('--args <values>', 'Function arguments (comma-separated)', commaSplit)
+  // ownershipTransfer
   .option('--contractAddress <address>', 'Contract for ownership transfer')
-  // Raw mode (fallback)
-  .option('--target <address>', 'Target contract address (raw mode)')
+  // raw
   .option('--callData <hex>', 'Calldata for execution (raw mode)')
   .option('--value <ether>', 'Native token value to send')
   .action((opts) => {
-    if (!opts.scope && (!opts.target || !opts.callData)) {
-      throw new Error(
-        'Provide --scope for human-readable mode, or --target and --callData for raw mode.',
-      );
-    }
-
-    if (opts.scope) {
-      redeem({
-        profile: opts.profile,
-        from: opts.from as Address,
-        scope: opts.scope,
-        tokenAddress: opts.tokenAddress as Address | undefined,
-        to: opts.to as Address | undefined,
-        amount: opts.amount,
-        tokenId: opts.tokenId,
-        target: opts.target as Address | undefined,
-        function: opts.function,
-        args: opts.args,
-        value: opts.value,
-        contractAddress: opts.contractAddress as Address | undefined,
-      });
-    } else {
-      redeem({
-        profile: opts.profile,
-        from: opts.from as Address,
-        target: opts.target as Address,
-        callData: opts.callData as Hex,
-        value: opts.value,
-      });
-    }
+    redeem({
+      profile: opts.profile,
+      from: opts.from as Address,
+      action: opts.action,
+      tokenAddress: opts.tokenAddress as Address | undefined,
+      to: opts.to as Address | undefined,
+      amount: opts.amount,
+      tokenId: opts.tokenId,
+      target: opts.target as Address | undefined,
+      function: opts.function,
+      args: opts.args,
+      value: opts.value,
+      contractAddress: opts.contractAddress as Address | undefined,
+      callData: opts.callData as Hex | undefined,
+    });
   });
 
 // revoke

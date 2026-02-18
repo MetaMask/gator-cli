@@ -1,5 +1,7 @@
 # @metamask/gator-cli
 
+> **Alpha version:** This CLI stores your private key in a local JSON file (`~/.gator-cli/`). Do not use it with accounts holding significant funds.
+
 ## Installation
 
 Yarn:
@@ -34,17 +36,17 @@ gator inspect
 
 ## Commands
 
-| Command   | Description                                   |
-| --------- | --------------------------------------------- |
-| `init`    | Generate a private key and save config        |
-| `create`  | Upgrade EOA to an EIP-7702 smart account      |
-| `show`    | Display the EOA address                       |
-| `status`  | Check config and on-chain account status      |
-| `balance` | Show native or ERC-20 balance                 |
-| `grant`   | Create, sign, and store a delegation          |
-| `redeem`  | Redeem a delegation (scope-aware or raw mode) |
-| `revoke`  | Revoke a delegation on-chain                  |
-| `inspect` | View delegations for your account             |
+| Command   | Description                              |
+| --------- | ---------------------------------------- |
+| `init`    | Generate a private key and save config   |
+| `create`  | Upgrade EOA to an EIP-7702 smart account |
+| `show`    | Display the EOA address                  |
+| `status`  | Check config and on-chain account status |
+| `balance` | Show native or ERC-20 balance            |
+| `grant`   | Create, sign, and store a delegation     |
+| `redeem`  | Redeem a delegation using an action type |
+| `revoke`  | Revoke a delegation on-chain             |
+| `inspect` | View delegations for your account        |
 
 Run `gator help <command>` for full flag details.
 
@@ -77,48 +79,51 @@ Named profiles are stored at `~/.gator-cli/profiles/<name>.json`.
 
 ## Redeeming Permissions
 
-`redeem` supports two modes:
-
-**Scope-aware mode** -- the CLI encodes calldata for you:
+`redeem` requires an `--action` flag that determines how the execution calldata is built.
 
 ```bash
 # Transfer 10 USDC using a delegation from 0xALICE
 gator redeem \
-  --from 0xALICE --scope erc20TransferAmount \
+  --from 0xALICE --action erc20Transfer \
   --tokenAddress 0xUSDC --to 0xCHARLIE --amount 10
+
+# Transfer an NFT
+gator redeem \
+  --from 0xALICE --action erc721Transfer \
+  --tokenAddress 0xNFT --to 0xCHARLIE --tokenId 42
 
 # Send 0.5 ETH
 gator redeem \
-  --from 0xALICE --scope nativeTokenTransferAmount \
+  --from 0xALICE --action nativeTransfer \
   --to 0xCHARLIE --amount 0.5
 
 # Call a contract function
 gator redeem \
-  --from 0xALICE --scope functionCall \
+  --from 0xALICE --action functionCall \
   --target 0xUSDC --function "approve(address,uint256)" \
   --args "0xSPENDER,1000000"
-```
 
-**Raw mode** -- pass pre-encoded calldata directly:
-
-```bash
+# Transfer contract ownership
 gator redeem \
-  --from 0xALICE --target 0xUSDC --callData 0xa9059cbb...
+  --from 0xALICE --action ownershipTransfer \
+  --contractAddress 0xCONTRACT --to 0xNEW_OWNER
+
+# Raw mode — pass pre-encoded calldata directly
+gator redeem \
+  --from 0xALICE --action raw \
+  --target 0xUSDC --callData 0xa9059cbb...
 ```
 
-### Redeem Flags per Scope
+### Redeem Flags per Action
 
-| Scope                       | Required Flags                        |
-| --------------------------- | ------------------------------------- |
-| `erc20TransferAmount`       | `--tokenAddress`, `--to`, `--amount`  |
-| `erc20PeriodTransfer`       | `--tokenAddress`, `--to`, `--amount`  |
-| `erc20Streaming`            | `--tokenAddress`, `--to`, `--amount`  |
-| `erc721Transfer`            | `--tokenAddress`, `--to`, `--tokenId` |
-| `nativeTokenTransferAmount` | `--to`, `--amount`                    |
-| `nativeTokenPeriodTransfer` | `--to`, `--amount`                    |
-| `nativeTokenStreaming`      | `--to`, `--amount`                    |
-| `functionCall`              | `--target`, `--function`, `--args`    |
-| `ownershipTransfer`         | `--contractAddress`, `--to`           |
+| Action              | Required Flags                        |
+| ------------------- | ------------------------------------- |
+| `erc20Transfer`     | `--tokenAddress`, `--to`, `--amount`  |
+| `erc721Transfer`    | `--tokenAddress`, `--to`, `--tokenId` |
+| `nativeTransfer`    | `--to`, `--amount`                    |
+| `functionCall`      | `--target`, `--function`, `--args`    |
+| `ownershipTransfer` | `--contractAddress`, `--to`           |
+| `raw`               | `--target`, `--callData`              |
 
 ## Balance
 
