@@ -5,6 +5,8 @@ on:
     secrets:
       NPM_TOKEN:
         required: true
+      SLACK_WEBHOOK_URL:
+        required: true
 
 jobs:
   publish-release:
@@ -51,7 +53,10 @@ jobs:
         with:
           name: publish-release-artifacts-${{ github.sha }}
       - name: Dry Run Publish
-        run: npm publish --dry-run
+        uses: MetaMask/action-npm-publish@v5
+        with:
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          subteam: S042S7RE4AE # @metamask-npm-publishers
         env:
           SKIP_PREPACK: true
 
@@ -75,7 +80,10 @@ jobs:
           name: publish-release-artifacts-${{ github.sha }}
           path: ./dist
       - name: Publish to npm
-        run: npm publish
+        uses: MetaMask/action-npm-publish@v5
+        with:
+          # This `NPM_TOKEN` needs to be manually set per-repository.
+          # Look in the repository settings under "Environments", and set this token in the `npm-publish` environment.
+          npm-token: ${{ secrets.NPM_TOKEN }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           SKIP_PREPACK: true
