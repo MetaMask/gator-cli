@@ -78,7 +78,6 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: publish-release-artifacts-${{ github.sha }}
-          path: ./dist
       - name: Publish to npm
         uses: MetaMask/action-npm-publish@v5
         with:
