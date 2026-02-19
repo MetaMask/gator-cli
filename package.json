@@ -1,6 +1,6 @@
 {
   "name": "@metamask/gator-cli",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.0",
   "private": true,
   "description": "ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts",
   "repository": {
