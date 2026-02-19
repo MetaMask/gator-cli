@@ -53,7 +53,7 @@ jobs:
         with:
           name: publish-release-artifacts-${{ github.sha }}
       - name: Dry Run Publish
-        run: npm publish --dry-run
+        uses: MetaMask/action-npm-publish@v5
         with:
           slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
           subteam: S042S7RE4AE # @metamask-npm-publishers
