@@ -1,8 +1,8 @@
 {
   "name": "@metamask/gator-cli",
-  "version": "0.1.0-alpha.0",
+  "version": "0.0.0",
   "private": true,
-  "description": "CLI for managing ERC-7710 delegations using MetaMask Smart Accounts Kit — grant, redeem, revoke, and inspect permissions from the terminal",
+  "description": "ERC-7710 Delegation CLI — grant, redeem, and revoke permissions on MetaMask Smart Accounts",
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/gator-cli.git"
@@ -18,8 +18,6 @@
     "build": "tsc --project tsconfig.build.json",
     "build:clean": "rm -rf dist && yarn build",
     "build:docs": "typedoc",
-    "changelog:update": "auto-changelog update --prettier",
-    "changelog:validate": "auto-changelog validate --prettier",
     "clean": "rm -rf dist",
     "dev": "tsx src/index.ts",
     "format": "prettier '**/*.json' '**/*.md' '**/*.yml' '**/*.mjs' '**/*.mts' '**/*.ts' --ignore-path .gitignore --no-error-on-unmatched-pattern --write",
@@ -34,7 +32,6 @@
     "viem": "^2.21.0"
   },
   "devDependencies": {
-    "@metamask/auto-changelog": "^5.0.2",
     "@types/node": "^22.0.0",
     "@vitest/coverage-istanbul": "^4.0.18",
     "prettier": "^3.3.3",
