@@ -86,7 +86,9 @@ describe('e2e: fetchDelegations filters', () => {
   it('GIVEN returns only delegations where address is delegator', async () => {
     const given = await client.fetchDelegations(ALICE, 'GIVEN');
     expect(given).toHaveLength(2);
-    given.forEach((d) => expect(d.delegator.toLowerCase()).toBe(ALICE.toLowerCase()));
+    given.forEach((d) =>
+      expect(d.delegator.toLowerCase()).toBe(ALICE.toLowerCase()),
+    );
   });
 
   it('RECEIVED returns only delegations where address is delegate', async () => {
