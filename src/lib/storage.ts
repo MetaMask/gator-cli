@@ -244,9 +244,7 @@ export function getStorageClient(config: PermissionsConfig, profile?: string) {
           }
           const parent = byHash.get(authority.toLowerCase());
           if (!parent) {
-            throw new Error(
-              `Delegation chain missing authority ${authority} in local storage`,
-            );
+            break;
           }
           current = parent;
         }
