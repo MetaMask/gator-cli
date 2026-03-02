@@ -134,7 +134,8 @@ program
 program
   .command('redeem')
   .description('Redeem a delegation using a specific action type')
-  .requiredOption('--from <address>', 'Delegator address')
+  .option('--from <address>', 'Delegator address')
+  .option('--delegationHash <hash>', 'Delegation hash to redeem directly')
   .requiredOption(
     '--action <type>',
     'Action type: erc20Transfer, erc721Transfer, nativeTransfer, functionCall, ownershipTransfer, raw',
@@ -160,7 +161,8 @@ program
   .action((opts) => {
     redeem({
       profile: opts.profile,
-      from: opts.from as Address,
+      from: opts.from as Address | undefined,
+      delegationHash: opts.delegationHash as Hex | undefined,
       action: opts.action,
       tokenAddress: opts.tokenAddress as Address | undefined,
       to: opts.to as Address | undefined,
