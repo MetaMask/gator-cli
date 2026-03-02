@@ -53,14 +53,10 @@ export async function redeem(opts: RedeemOptions) {
     );
 
     if (matching.length === 0) {
-      throw new Error(
-        `No delegation found from ${from} to ${account.address}`,
-      );
+      throw new Error(`No delegation found from ${from} to ${account.address}`);
     }
 
-    console.log(
-      `  Found ${matching.length} delegation(s). Using first match.`,
-    );
+    console.log(`  Found ${matching.length} delegation(s). Using first match.`);
 
     delegationChain = await storageClient.getDelegationChain(matching[0]!);
     delegator = from;
