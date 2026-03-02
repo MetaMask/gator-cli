@@ -56,8 +56,9 @@ export type RedeemAction =
   | 'raw';
 
 export interface RedeemOptions extends ProfileOptions {
-  from: Address;
+  from?: Address;
   action: RedeemAction;
+  delegationHash?: Hex;
   // ERC-20 / ERC-721 transfers
   tokenAddress?: Address;
   to?: Address;
