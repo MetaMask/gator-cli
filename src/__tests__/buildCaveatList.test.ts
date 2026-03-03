@@ -2,10 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { type PublicClient, type Address, type Hex } from 'viem';
 import { getSmartAccountsEnvironment } from '@metamask/smart-accounts-kit';
 import { baseSepolia } from 'viem/chains';
-import {
-  buildCaveatList,
-  buildDelegationAuthority,
-} from '../lib/caveats.js';
+import { buildCaveatList, buildDelegationAuthority } from '../lib/caveats.js';
 import type { GrantOptions } from '../types.js';
 
 vi.mock('../lib/token.js', () => ({
@@ -380,7 +377,6 @@ describe('buildCaveatList – deployed validation', () => {
     ).rejects.toThrow('--deployAddress required');
   });
 });
-
 
 describe('buildCaveatList – limitedCalls', () => {
   it('produces a caveat with the LimitedCalls enforcer', async () => {
