@@ -70,15 +70,17 @@ Use the `grant` command with one or more `--allow <type>` flags to attach caveat
 ### Examples
 
 ```bash
-# Allow up to 50 USDC transfers
 gator grant --to 0xBOB \
   --allow erc20TransferAmount \
   --tokenAddress 0xUSDC --maxAmount 50
 
-# Allow up to 1 ETH in native token transfers, limited to 3 calls
 gator grant --to 0xBOB \
-  --allow nativeTokenTransferAmount --maxAmount 1 \
-  --allow limitedCalls --limit 3
+  --allow erc20TransferAmount --tokenAddress 0xUSDC --maxAmount 50 \
+  --allow limitedCalls --limit 5
+
+gator grant --to 0xBOB \
+  --allow allowedTargets --allowedTargets 0xContract \
+  --allow allowedMethods --allowedMethods "transfer(address,uint256)"
 
 # Time-bounded delegation
 gator grant --to 0xBOB \
@@ -89,6 +91,11 @@ gator grant --to 0xBOB \
 gator grant --to 0xBOB \
   --allow nativeTokenTransferAmount --maxAmount 1 \
   --allow redeemer --redeemers 0xADDR1,0xADDR2
+
+# Custom caveat enforcer
+gator grant --to 0xBOB \
+  --allow nativeTokenTransferAmount --maxAmount 1 \
+  --allow custom --enforcerAddress 0xDeployed --enforcerTerms 0xEncoded
 ```
 
 ### Caveat Types
@@ -103,6 +110,7 @@ gator grant --to 0xBOB \
 | `nativeTokenPeriodTransfer` | `--periodAmount`, `--periodDuration`                                                                                                    |
 | `nativeTokenStreaming`      | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                                                                                   |
 | `ownershipTransfer`         | `--contractAddress`                                                                                                                     |
+| `functionCall`              | `--allowedTargets`, `--allowedMethods`                                                                                                  |
 | `limitedCalls`              | `--limit`                                                                                                                               |
 | `timestamp`                 | `--afterTimestamp`, `--beforeTimestamp`                                                                                                 |
 | `blockNumber`               | `--afterBlock`, `--beforeBlock`                                                                                                         |
@@ -122,6 +130,7 @@ gator grant --to 0xBOB \
 | `erc721BalanceChange`       | `--erc721BalanceToken`, `--erc721BalanceRecipient`, `--erc721BalanceAmount`, `--erc721BalanceChangeType`                                |
 | `erc1155BalanceChange`      | `--erc1155BalanceToken`, `--erc1155BalanceRecipient`, `--erc1155BalanceTokenId`, `--erc1155BalanceAmount`, `--erc1155BalanceChangeType` |
 | `deployed`                  | `--deployAddress`, `--deploySalt`, `--deployBytecode`                                                                                   |
+| `custom`                    | `--enforcerAddress`, `--enforcerTerms`                                                                                                  |
 
 ### Optional Flags
 
@@ -132,6 +141,7 @@ Some caveats accept optional flags with sensible defaults:
 - **`timestamp`**: both `--afterTimestamp` and `--beforeTimestamp` default to `0` (no bound) when omitted.
 - **`blockNumber`**: both `--afterBlock` and `--beforeBlock` default to `0` when omitted.
 - **`exactExecution`**: `--execValue` defaults to `0` and `--execCalldata` defaults to `0x`.
+- **`functionCall`**: `--maxValue` is optional (adds a `valueLte` constraint to the scope).
 
 ## Redeeming Permissions
 

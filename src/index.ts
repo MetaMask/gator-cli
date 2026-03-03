@@ -86,7 +86,7 @@ program
   .option('--profile <name>', 'Profile name', 'default')
   .option(
     '--allow <type>',
-    'Caveat type (list): erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, ownershipTransfer, limitedCalls, timestamp, blockNumber, redeemer, nonce, id, valueLte, allowedTargets, allowedMethods, allowedCalldata, argsEqualityCheck, exactCalldata, nativeTokenPayment, nativeBalanceChange, erc20BalanceChange, erc721BalanceChange, erc1155BalanceChange, deployed, exactExecution',
+    'Allow permission type (list): erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, ownershipTransfer, functionCall, limitedCalls, timestamp, blockNumber, redeemer, nonce, id, valueLte, allowedTargets, allowedMethods, allowedCalldata, argsEqualityCheck, exactCalldata, nativeTokenPayment, nativeBalanceChange, erc20BalanceChange, erc721BalanceChange, erc1155BalanceChange, deployed, exactExecution, custom',
     collect,
     [],
   )
@@ -212,6 +212,15 @@ program
   .option('--execTarget <address>', 'Exact execution target address')
   .option('--execValue <ether>', 'Exact execution value')
   .option('--execCalldata <hex>', 'Exact execution calldata')
+  // custom caveat enforcer
+  .option(
+    '--enforcerAddress <address>',
+    'Custom caveat enforcer contract address',
+  )
+  .option(
+    '--enforcerTerms <hex>',
+    'ABI-encoded terms for custom caveat enforcer',
+  )
   .action((opts) => {
     grant({
       profile: opts.profile,
@@ -272,6 +281,8 @@ program
       execTarget: opts.execTarget as Address | undefined,
       execValue: opts.execValue,
       execCalldata: opts.execCalldata as Hex | undefined,
+      enforcerAddress: opts.enforcerAddress as Address | undefined,
+      enforcerTerms: opts.enforcerTerms as Hex | undefined,
     });
   });
 

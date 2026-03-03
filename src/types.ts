@@ -99,6 +99,9 @@ export interface GrantOptions extends ProfileOptions {
   execTarget?: Address;
   execValue?: string;
   execCalldata?: Hex;
+  // custom caveat enforcer
+  enforcerAddress?: Address;
+  enforcerTerms?: Hex;
 }
 
 export type RedeemAction =

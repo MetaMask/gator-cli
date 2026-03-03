@@ -1,8 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
-import { parseEther, parseUnits, type PublicClient } from 'viem';
+import { type PublicClient, type Address, type Hex } from 'viem';
 import { getSmartAccountsEnvironment } from '@metamask/smart-accounts-kit';
 import { baseSepolia } from 'viem/chains';
-import { buildCaveatList } from '../lib/caveats.js';
+import {
+  buildCaveatList,
+  buildDelegationAuthority,
+  buildScopeConfig,
+} from '../lib/caveats.js';
 import type { GrantOptions } from '../types.js';
 
 vi.mock('../lib/token.js', () => ({
@@ -15,6 +19,8 @@ const DELEGATE = '0xEC12d2450934E3c158129D0B387739506C789b07' as const;
 const TOKEN = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const;
 const CONTRACT = '0x0000000000000000000000000000000000000001' as const;
 const RECIPIENT = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' as const;
+const ENFORCER = '0x1234567890abcdef1234567890abcdef12345678' as Address;
+const TERMS = '0xdeadbeef' as Hex;
 
 const mockPublicClient = {} as PublicClient;
 
@@ -67,7 +73,336 @@ describe('buildCaveatList – general', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Former caveat types – validation
+// buildDelegationAuthority – scope/caveat partitioning
+// ---------------------------------------------------------------------------
+
+describe('buildDelegationAuthority – scope partitioning', () => {
+  it('throws when allow is empty', async () => {
+    await expect(
+      buildDelegationAuthority(
+        makeOpts({ allow: [] }),
+        mockPublicClient,
+        environment,
+      ),
+    ).rejects.toThrow('At least one --allow <type> is required');
+  });
+
+  it('detects a scope type and returns scope + empty caveats', async () => {
+    const result = await buildDelegationAuthority(
+      makeOpts({
+        allow: ['nativeTokenTransferAmount'],
+        maxAmount: '1',
+      }),
+      mockPublicClient,
+      environment,
+    );
+
+    expect(result.scope).not.toBeNull();
+    expect(result.scope!.type).toBe('nativeTokenTransferAmount');
+    expect(result.caveats).toHaveLength(0);
+  });
+
+  it('returns scope + additional caveats when both are present', async () => {
+    const result = await buildDelegationAuthority(
+      makeOpts({
+        allow: ['erc20TransferAmount', 'limitedCalls'],
+        tokenAddress: TOKEN,
+        maxAmount: '50',
+        limit: 5,
+      }),
+      mockPublicClient,
+      environment,
+    );
+
+    expect(result.scope).not.toBeNull();
+    expect(result.scope!.type).toBe('erc20TransferAmount');
+    expect(result.caveats).toHaveLength(1);
+    expect(result.caveats[0]!.enforcer).toBe(
+      environment.caveatEnforcers.LimitedCallsEnforcer,
+    );
+  });
+
+  it('returns null scope when only non-scope caveats present', async () => {
+    const result = await buildDelegationAuthority(
+      makeOpts({
+        allow: ['limitedCalls', 'timestamp'],
+        limit: 3,
+        afterTimestamp: 1700000000,
+      }),
+      mockPublicClient,
+      environment,
+    );
+
+    expect(result.scope).toBeNull();
+    expect(result.caveats).toHaveLength(2);
+  });
+
+  it('throws when >1 scope type is provided', async () => {
+    await expect(
+      buildDelegationAuthority(
+        makeOpts({
+          allow: ['nativeTokenTransferAmount', 'erc20TransferAmount'],
+          maxAmount: '1',
+          tokenAddress: TOKEN,
+        }),
+        mockPublicClient,
+        environment,
+      ),
+    ).rejects.toThrow('Only one scope type allowed per delegation');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// buildScopeConfig – individual scope types
+// ---------------------------------------------------------------------------
+
+describe('buildScopeConfig', () => {
+  it('builds erc20TransferAmount scope', async () => {
+    const scope = await buildScopeConfig(
+      'erc20TransferAmount',
+      makeOpts({ tokenAddress: TOKEN, maxAmount: '10' }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('erc20TransferAmount');
+    expect(scope).toHaveProperty('tokenAddress', TOKEN);
+  });
+
+  it('builds nativeTokenTransferAmount scope', async () => {
+    const scope = await buildScopeConfig(
+      'nativeTokenTransferAmount',
+      makeOpts({ maxAmount: '1.5' }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('nativeTokenTransferAmount');
+  });
+
+  it('builds erc721Transfer scope', async () => {
+    const scope = await buildScopeConfig(
+      'erc721Transfer',
+      makeOpts({ tokenAddress: TOKEN, tokenId: '42' }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('erc721Transfer');
+  });
+
+  it('builds ownershipTransfer scope', async () => {
+    const scope = await buildScopeConfig(
+      'ownershipTransfer',
+      makeOpts({ contractAddress: CONTRACT }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('ownershipTransfer');
+  });
+
+  it('builds nativeTokenPeriodTransfer scope', async () => {
+    const scope = await buildScopeConfig(
+      'nativeTokenPeriodTransfer',
+      makeOpts({ periodAmount: '1', periodDuration: 3600 }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('nativeTokenPeriodTransfer');
+  });
+
+  it('builds nativeTokenStreaming scope', async () => {
+    const scope = await buildScopeConfig(
+      'nativeTokenStreaming',
+      makeOpts({
+        amountPerSecond: '0.001',
+        initialAmount: '0',
+        maxAmount: '100',
+      }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('nativeTokenStreaming');
+  });
+
+  it('builds erc20PeriodTransfer scope', async () => {
+    const scope = await buildScopeConfig(
+      'erc20PeriodTransfer',
+      makeOpts({
+        tokenAddress: TOKEN,
+        periodAmount: '100',
+        periodDuration: 86400,
+      }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('erc20PeriodTransfer');
+  });
+
+  it('builds erc20Streaming scope', async () => {
+    const scope = await buildScopeConfig(
+      'erc20Streaming',
+      makeOpts({
+        tokenAddress: TOKEN,
+        amountPerSecond: '0.01',
+        initialAmount: '0',
+        maxAmount: '1000',
+      }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('erc20Streaming');
+  });
+
+  it('builds functionCall scope', async () => {
+    const scope = await buildScopeConfig(
+      'functionCall',
+      makeOpts({
+        allowedTargets: [CONTRACT],
+        allowedMethods: ['transfer(address,uint256)'],
+      }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('functionCall');
+  });
+
+  it('builds functionCall scope with valueLte', async () => {
+    const scope = await buildScopeConfig(
+      'functionCall',
+      makeOpts({
+        allowedTargets: [CONTRACT],
+        allowedMethods: ['transfer(address,uint256)'],
+        maxValue: '0.01',
+      }),
+      mockPublicClient,
+    );
+    expect(scope.type).toBe('functionCall');
+    expect(
+      (scope as Extract<typeof scope, { type: 'functionCall' }>).valueLte,
+    ).toBeDefined();
+  });
+
+  it('throws for unknown scope type', async () => {
+    await expect(
+      buildScopeConfig('notAScope', makeOpts({}), mockPublicClient),
+    ).rejects.toThrow('Unknown scope type');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Scope validation errors
+// ---------------------------------------------------------------------------
+
+describe('buildScopeConfig – validation', () => {
+  it('erc20TransferAmount requires tokenAddress', async () => {
+    await expect(
+      buildScopeConfig(
+        'erc20TransferAmount',
+        makeOpts({ maxAmount: '10' }),
+        mockPublicClient,
+      ),
+    ).rejects.toThrow('--tokenAddress required');
+  });
+
+  it('erc20TransferAmount requires maxAmount', async () => {
+    await expect(
+      buildScopeConfig(
+        'erc20TransferAmount',
+        makeOpts({ tokenAddress: TOKEN }),
+        mockPublicClient,
+      ),
+    ).rejects.toThrow('--maxAmount required');
+  });
+
+  it('nativeTokenTransferAmount requires maxAmount', async () => {
+    await expect(
+      buildScopeConfig(
+        'nativeTokenTransferAmount',
+        makeOpts({}),
+        mockPublicClient,
+      ),
+    ).rejects.toThrow('--maxAmount required');
+  });
+
+  it('functionCall requires allowedTargets', async () => {
+    await expect(
+      buildScopeConfig(
+        'functionCall',
+        makeOpts({ allowedMethods: ['transfer(address,uint256)'] }),
+        mockPublicClient,
+      ),
+    ).rejects.toThrow('--allowedTargets required');
+  });
+
+  it('functionCall requires allowedMethods', async () => {
+    await expect(
+      buildScopeConfig(
+        'functionCall',
+        makeOpts({ allowedTargets: [CONTRACT] }),
+        mockPublicClient,
+      ),
+    ).rejects.toThrow('--allowedMethods required');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Custom caveat
+// ---------------------------------------------------------------------------
+
+describe('buildDelegationAuthority – custom caveat', () => {
+  it('builds a custom caveat with enforcerAddress and enforcerTerms', async () => {
+    const result = await buildDelegationAuthority(
+      makeOpts({
+        allow: ['custom'],
+        enforcerAddress: ENFORCER,
+        enforcerTerms: TERMS,
+      }),
+      mockPublicClient,
+      environment,
+    );
+
+    expect(result.scope).toBeNull();
+    expect(result.caveats).toHaveLength(1);
+    expect(result.caveats[0]!.enforcer).toBe(ENFORCER);
+    expect(result.caveats[0]!.terms).toBe(TERMS);
+  });
+
+  it('throws when enforcerAddress is missing for custom', async () => {
+    await expect(
+      buildDelegationAuthority(
+        makeOpts({
+          allow: ['custom'],
+          enforcerTerms: TERMS,
+        }),
+        mockPublicClient,
+        environment,
+      ),
+    ).rejects.toThrow('--enforcerAddress required for custom caveat');
+  });
+
+  it('throws when enforcerTerms is missing for custom', async () => {
+    await expect(
+      buildDelegationAuthority(
+        makeOpts({
+          allow: ['custom'],
+          enforcerAddress: ENFORCER,
+        }),
+        mockPublicClient,
+        environment,
+      ),
+    ).rejects.toThrow('--enforcerTerms required for custom caveat');
+  });
+
+  it('combines scope with custom caveat', async () => {
+    const result = await buildDelegationAuthority(
+      makeOpts({
+        allow: ['nativeTokenTransferAmount', 'custom'],
+        maxAmount: '1',
+        enforcerAddress: ENFORCER,
+        enforcerTerms: TERMS,
+      }),
+      mockPublicClient,
+      environment,
+    );
+
+    expect(result.scope).not.toBeNull();
+    expect(result.scope!.type).toBe('nativeTokenTransferAmount');
+    expect(result.caveats).toHaveLength(1);
+    expect(result.caveats[0]!.enforcer).toBe(ENFORCER);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Non-scope caveats – validation (via buildCaveatList)
 // ---------------------------------------------------------------------------
 
 describe('buildCaveatList – erc20TransferAmount validation', () => {
@@ -222,10 +557,6 @@ describe('buildCaveatList – ownershipTransfer validation', () => {
     ).rejects.toThrow('--contractAddress required');
   });
 });
-
-// ---------------------------------------------------------------------------
-// Non-scope caveats – validation
-// ---------------------------------------------------------------------------
 
 describe('buildCaveatList – limitedCalls validation', () => {
   it('throws when missing limit', async () => {
@@ -387,7 +718,7 @@ describe('buildCaveatList – deployed validation', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Happy paths – verify real caveats are built
+// Happy paths – verify real caveats are built (via buildCaveatList)
 // ---------------------------------------------------------------------------
 
 describe('buildCaveatList – erc20TransferAmount', () => {
@@ -756,6 +1087,48 @@ describe('buildCaveatList – nativeTokenPeriodTransfer', () => {
     );
 
     expect(result).toHaveLength(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Custom caveat via buildCaveatList
+// ---------------------------------------------------------------------------
+
+describe('buildCaveatList – custom caveat', () => {
+  it('produces a caveat with custom enforcer', async () => {
+    const result = await buildCaveatList(
+      makeOpts({
+        allow: ['custom'],
+        enforcerAddress: ENFORCER,
+        enforcerTerms: TERMS,
+      }),
+      mockPublicClient,
+      environment,
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0]!.enforcer).toBe(ENFORCER);
+    expect(result[0]!.terms).toBe(TERMS);
+  });
+
+  it('throws when enforcerAddress is missing', async () => {
+    await expect(
+      buildCaveatList(
+        makeOpts({ allow: ['custom'], enforcerTerms: TERMS }),
+        mockPublicClient,
+        environment,
+      ),
+    ).rejects.toThrow('--enforcerAddress required for custom caveat');
+  });
+
+  it('throws when enforcerTerms is missing', async () => {
+    await expect(
+      buildCaveatList(
+        makeOpts({ allow: ['custom'], enforcerAddress: ENFORCER }),
+        mockPublicClient,
+        environment,
+      ),
+    ).rejects.toThrow('--enforcerTerms required for custom caveat');
   });
 });
 
