@@ -37,9 +37,14 @@ export async function buildCaveatList(
   for (const caveatType of opts.allow) {
     switch (caveatType) {
       case 'erc20TransferAmount': {
-        if (!opts.tokenAddress) throw new Error('--tokenAddress required for erc20TransferAmount');
-        if (!opts.maxAmount) throw new Error('--maxAmount required for erc20TransferAmount');
-        const decimals = await getTokenDecimals(publicClient, opts.tokenAddress);
+        if (!opts.tokenAddress)
+          throw new Error('--tokenAddress required for erc20TransferAmount');
+        if (!opts.maxAmount)
+          throw new Error('--maxAmount required for erc20TransferAmount');
+        const decimals = await getTokenDecimals(
+          publicClient,
+          opts.tokenAddress,
+        );
         builder.addCaveat('erc20TransferAmount', {
           tokenAddress: opts.tokenAddress,
           maxAmount: parseUnits(opts.maxAmount, decimals),
@@ -48,10 +53,16 @@ export async function buildCaveatList(
       }
 
       case 'erc20PeriodTransfer': {
-        if (!opts.tokenAddress) throw new Error('--tokenAddress required for erc20PeriodTransfer');
-        if (!opts.periodAmount) throw new Error('--periodAmount required for erc20PeriodTransfer');
-        if (opts.periodDuration == null) throw new Error('--periodDuration required for erc20PeriodTransfer');
-        const decimals = await getTokenDecimals(publicClient, opts.tokenAddress);
+        if (!opts.tokenAddress)
+          throw new Error('--tokenAddress required for erc20PeriodTransfer');
+        if (!opts.periodAmount)
+          throw new Error('--periodAmount required for erc20PeriodTransfer');
+        if (opts.periodDuration == null)
+          throw new Error('--periodDuration required for erc20PeriodTransfer');
+        const decimals = await getTokenDecimals(
+          publicClient,
+          opts.tokenAddress,
+        );
         builder.addCaveat('erc20PeriodTransfer', {
           tokenAddress: opts.tokenAddress,
           periodAmount: parseUnits(opts.periodAmount, decimals),
@@ -62,11 +73,18 @@ export async function buildCaveatList(
       }
 
       case 'erc20Streaming': {
-        if (!opts.tokenAddress) throw new Error('--tokenAddress required for erc20Streaming');
-        if (!opts.amountPerSecond) throw new Error('--amountPerSecond required for erc20Streaming');
-        if (!opts.initialAmount) throw new Error('--initialAmount required for erc20Streaming');
-        if (!opts.maxAmount) throw new Error('--maxAmount required for erc20Streaming');
-        const decimals = await getTokenDecimals(publicClient, opts.tokenAddress);
+        if (!opts.tokenAddress)
+          throw new Error('--tokenAddress required for erc20Streaming');
+        if (!opts.amountPerSecond)
+          throw new Error('--amountPerSecond required for erc20Streaming');
+        if (!opts.initialAmount)
+          throw new Error('--initialAmount required for erc20Streaming');
+        if (!opts.maxAmount)
+          throw new Error('--maxAmount required for erc20Streaming');
+        const decimals = await getTokenDecimals(
+          publicClient,
+          opts.tokenAddress,
+        );
         builder.addCaveat('erc20Streaming', {
           tokenAddress: opts.tokenAddress,
           amountPerSecond: parseUnits(opts.amountPerSecond, decimals),
@@ -78,8 +96,10 @@ export async function buildCaveatList(
       }
 
       case 'erc721Transfer': {
-        if (!opts.tokenAddress) throw new Error('--tokenAddress required for erc721Transfer');
-        if (!opts.tokenId) throw new Error('--tokenId required for erc721Transfer');
+        if (!opts.tokenAddress)
+          throw new Error('--tokenAddress required for erc721Transfer');
+        if (!opts.tokenId)
+          throw new Error('--tokenId required for erc721Transfer');
         builder.addCaveat('erc721Transfer', {
           tokenAddress: opts.tokenAddress,
           tokenId: BigInt(opts.tokenId),
@@ -88,7 +108,8 @@ export async function buildCaveatList(
       }
 
       case 'nativeTokenTransferAmount': {
-        if (!opts.maxAmount) throw new Error('--maxAmount required for nativeTokenTransferAmount');
+        if (!opts.maxAmount)
+          throw new Error('--maxAmount required for nativeTokenTransferAmount');
         builder.addCaveat('nativeTokenTransferAmount', {
           maxAmount: parseEther(opts.maxAmount),
         });
@@ -96,8 +117,14 @@ export async function buildCaveatList(
       }
 
       case 'nativeTokenPeriodTransfer': {
-        if (!opts.periodAmount) throw new Error('--periodAmount required for nativeTokenPeriodTransfer');
-        if (opts.periodDuration == null) throw new Error('--periodDuration required for nativeTokenPeriodTransfer');
+        if (!opts.periodAmount)
+          throw new Error(
+            '--periodAmount required for nativeTokenPeriodTransfer',
+          );
+        if (opts.periodDuration == null)
+          throw new Error(
+            '--periodDuration required for nativeTokenPeriodTransfer',
+          );
         builder.addCaveat('nativeTokenPeriodTransfer', {
           periodAmount: parseEther(opts.periodAmount),
           periodDuration: opts.periodDuration,
@@ -107,9 +134,14 @@ export async function buildCaveatList(
       }
 
       case 'nativeTokenStreaming': {
-        if (!opts.amountPerSecond) throw new Error('--amountPerSecond required for nativeTokenStreaming');
-        if (!opts.initialAmount) throw new Error('--initialAmount required for nativeTokenStreaming');
-        if (!opts.maxAmount) throw new Error('--maxAmount required for nativeTokenStreaming');
+        if (!opts.amountPerSecond)
+          throw new Error(
+            '--amountPerSecond required for nativeTokenStreaming',
+          );
+        if (!opts.initialAmount)
+          throw new Error('--initialAmount required for nativeTokenStreaming');
+        if (!opts.maxAmount)
+          throw new Error('--maxAmount required for nativeTokenStreaming');
         builder.addCaveat('nativeTokenStreaming', {
           amountPerSecond: parseEther(opts.amountPerSecond),
           initialAmount: parseEther(opts.initialAmount),
@@ -120,7 +152,8 @@ export async function buildCaveatList(
       }
 
       case 'ownershipTransfer': {
-        if (!opts.contractAddress) throw new Error('--contractAddress required for ownershipTransfer');
+        if (!opts.contractAddress)
+          throw new Error('--contractAddress required for ownershipTransfer');
         builder.addCaveat('ownershipTransfer', {
           contractAddress: opts.contractAddress,
         });
@@ -128,7 +161,8 @@ export async function buildCaveatList(
       }
 
       case 'limitedCalls': {
-        if (opts.limit == null) throw new Error('--limit required for limitedCalls');
+        if (opts.limit == null)
+          throw new Error('--limit required for limitedCalls');
         builder.addCaveat('limitedCalls', { limit: opts.limit });
         break;
       }
@@ -150,7 +184,8 @@ export async function buildCaveatList(
       }
 
       case 'redeemer': {
-        if (!opts.redeemers?.length) throw new Error('--redeemers required for redeemer');
+        if (!opts.redeemers?.length)
+          throw new Error('--redeemers required for redeemer');
         builder.addCaveat('redeemer', {
           redeemers: opts.redeemers as Address[],
         });
@@ -164,7 +199,8 @@ export async function buildCaveatList(
       }
 
       case 'id': {
-        if (opts.caveatId == null) throw new Error('--caveatId required for id');
+        if (opts.caveatId == null)
+          throw new Error('--caveatId required for id');
         builder.addCaveat('id', { id: BigInt(opts.caveatId) });
         break;
       }
@@ -178,7 +214,8 @@ export async function buildCaveatList(
       }
 
       case 'allowedTargets': {
-        if (!opts.allowedTargets?.length) throw new Error('--allowedTargets required for allowedTargets');
+        if (!opts.allowedTargets?.length)
+          throw new Error('--allowedTargets required for allowedTargets');
         builder.addCaveat('allowedTargets', {
           targets: opts.allowedTargets as Address[],
         });
@@ -186,7 +223,8 @@ export async function buildCaveatList(
       }
 
       case 'allowedMethods': {
-        if (!opts.allowedMethods?.length) throw new Error('--allowedMethods required for allowedMethods');
+        if (!opts.allowedMethods?.length)
+          throw new Error('--allowedMethods required for allowedMethods');
         builder.addCaveat('allowedMethods', {
           selectors: opts.allowedMethods,
         });
@@ -194,8 +232,10 @@ export async function buildCaveatList(
       }
 
       case 'allowedCalldata': {
-        if (opts.calldataStartIndex == null) throw new Error('--calldataStartIndex required for allowedCalldata');
-        if (!opts.calldataValue) throw new Error('--calldataValue required for allowedCalldata');
+        if (opts.calldataStartIndex == null)
+          throw new Error('--calldataStartIndex required for allowedCalldata');
+        if (!opts.calldataValue)
+          throw new Error('--calldataValue required for allowedCalldata');
         builder.addCaveat('allowedCalldata', {
           startIndex: opts.calldataStartIndex,
           value: opts.calldataValue,
@@ -204,20 +244,24 @@ export async function buildCaveatList(
       }
 
       case 'argsEqualityCheck': {
-        if (!opts.argsCheck) throw new Error('--argsCheck required for argsEqualityCheck');
+        if (!opts.argsCheck)
+          throw new Error('--argsCheck required for argsEqualityCheck');
         builder.addCaveat('argsEqualityCheck', { args: opts.argsCheck });
         break;
       }
 
       case 'exactCalldata': {
-        if (!opts.exactCalldata) throw new Error('--exactCalldata required for exactCalldata');
+        if (!opts.exactCalldata)
+          throw new Error('--exactCalldata required for exactCalldata');
         builder.addCaveat('exactCalldata', { calldata: opts.exactCalldata });
         break;
       }
 
       case 'nativeTokenPayment': {
-        if (!opts.paymentRecipient) throw new Error('--paymentRecipient required for nativeTokenPayment');
-        if (!opts.paymentAmount) throw new Error('--paymentAmount required for nativeTokenPayment');
+        if (!opts.paymentRecipient)
+          throw new Error('--paymentRecipient required for nativeTokenPayment');
+        if (!opts.paymentAmount)
+          throw new Error('--paymentAmount required for nativeTokenPayment');
         builder.addCaveat('nativeTokenPayment', {
           recipient: opts.paymentRecipient,
           amount: parseEther(opts.paymentAmount),
@@ -226,9 +270,18 @@ export async function buildCaveatList(
       }
 
       case 'nativeBalanceChange': {
-        if (!opts.nativeBalanceRecipient) throw new Error('--nativeBalanceRecipient required for nativeBalanceChange');
-        if (!opts.nativeBalanceAmount) throw new Error('--nativeBalanceAmount required for nativeBalanceChange');
-        if (!opts.nativeBalanceChangeType) throw new Error('--nativeBalanceChangeType required for nativeBalanceChange');
+        if (!opts.nativeBalanceRecipient)
+          throw new Error(
+            '--nativeBalanceRecipient required for nativeBalanceChange',
+          );
+        if (!opts.nativeBalanceAmount)
+          throw new Error(
+            '--nativeBalanceAmount required for nativeBalanceChange',
+          );
+        if (!opts.nativeBalanceChangeType)
+          throw new Error(
+            '--nativeBalanceChangeType required for nativeBalanceChange',
+          );
         builder.addCaveat('nativeBalanceChange', {
           recipient: opts.nativeBalanceRecipient,
           balance: parseEther(opts.nativeBalanceAmount),
@@ -238,10 +291,22 @@ export async function buildCaveatList(
       }
 
       case 'erc20BalanceChange': {
-        if (!opts.erc20BalanceToken) throw new Error('--erc20BalanceToken required for erc20BalanceChange');
-        if (!opts.erc20BalanceRecipient) throw new Error('--erc20BalanceRecipient required for erc20BalanceChange');
-        if (!opts.erc20BalanceAmount) throw new Error('--erc20BalanceAmount required for erc20BalanceChange');
-        if (!opts.erc20BalanceChangeType) throw new Error('--erc20BalanceChangeType required for erc20BalanceChange');
+        if (!opts.erc20BalanceToken)
+          throw new Error(
+            '--erc20BalanceToken required for erc20BalanceChange',
+          );
+        if (!opts.erc20BalanceRecipient)
+          throw new Error(
+            '--erc20BalanceRecipient required for erc20BalanceChange',
+          );
+        if (!opts.erc20BalanceAmount)
+          throw new Error(
+            '--erc20BalanceAmount required for erc20BalanceChange',
+          );
+        if (!opts.erc20BalanceChangeType)
+          throw new Error(
+            '--erc20BalanceChangeType required for erc20BalanceChange',
+          );
         builder.addCaveat('erc20BalanceChange', {
           tokenAddress: opts.erc20BalanceToken,
           recipient: opts.erc20BalanceRecipient,
@@ -252,10 +317,22 @@ export async function buildCaveatList(
       }
 
       case 'erc721BalanceChange': {
-        if (!opts.erc721BalanceToken) throw new Error('--erc721BalanceToken required for erc721BalanceChange');
-        if (!opts.erc721BalanceRecipient) throw new Error('--erc721BalanceRecipient required for erc721BalanceChange');
-        if (!opts.erc721BalanceAmount) throw new Error('--erc721BalanceAmount required for erc721BalanceChange');
-        if (!opts.erc721BalanceChangeType) throw new Error('--erc721BalanceChangeType required for erc721BalanceChange');
+        if (!opts.erc721BalanceToken)
+          throw new Error(
+            '--erc721BalanceToken required for erc721BalanceChange',
+          );
+        if (!opts.erc721BalanceRecipient)
+          throw new Error(
+            '--erc721BalanceRecipient required for erc721BalanceChange',
+          );
+        if (!opts.erc721BalanceAmount)
+          throw new Error(
+            '--erc721BalanceAmount required for erc721BalanceChange',
+          );
+        if (!opts.erc721BalanceChangeType)
+          throw new Error(
+            '--erc721BalanceChangeType required for erc721BalanceChange',
+          );
         builder.addCaveat('erc721BalanceChange', {
           tokenAddress: opts.erc721BalanceToken,
           recipient: opts.erc721BalanceRecipient,
@@ -266,11 +343,26 @@ export async function buildCaveatList(
       }
 
       case 'erc1155BalanceChange': {
-        if (!opts.erc1155BalanceToken) throw new Error('--erc1155BalanceToken required for erc1155BalanceChange');
-        if (!opts.erc1155BalanceRecipient) throw new Error('--erc1155BalanceRecipient required for erc1155BalanceChange');
-        if (!opts.erc1155BalanceTokenId) throw new Error('--erc1155BalanceTokenId required for erc1155BalanceChange');
-        if (!opts.erc1155BalanceAmount) throw new Error('--erc1155BalanceAmount required for erc1155BalanceChange');
-        if (!opts.erc1155BalanceChangeType) throw new Error('--erc1155BalanceChangeType required for erc1155BalanceChange');
+        if (!opts.erc1155BalanceToken)
+          throw new Error(
+            '--erc1155BalanceToken required for erc1155BalanceChange',
+          );
+        if (!opts.erc1155BalanceRecipient)
+          throw new Error(
+            '--erc1155BalanceRecipient required for erc1155BalanceChange',
+          );
+        if (!opts.erc1155BalanceTokenId)
+          throw new Error(
+            '--erc1155BalanceTokenId required for erc1155BalanceChange',
+          );
+        if (!opts.erc1155BalanceAmount)
+          throw new Error(
+            '--erc1155BalanceAmount required for erc1155BalanceChange',
+          );
+        if (!opts.erc1155BalanceChangeType)
+          throw new Error(
+            '--erc1155BalanceChangeType required for erc1155BalanceChange',
+          );
         builder.addCaveat('erc1155BalanceChange', {
           tokenAddress: opts.erc1155BalanceToken,
           recipient: opts.erc1155BalanceRecipient,
@@ -282,9 +374,12 @@ export async function buildCaveatList(
       }
 
       case 'deployed': {
-        if (!opts.deployAddress) throw new Error('--deployAddress required for deployed');
-        if (!opts.deploySalt) throw new Error('--deploySalt required for deployed');
-        if (!opts.deployBytecode) throw new Error('--deployBytecode required for deployed');
+        if (!opts.deployAddress)
+          throw new Error('--deployAddress required for deployed');
+        if (!opts.deploySalt)
+          throw new Error('--deploySalt required for deployed');
+        if (!opts.deployBytecode)
+          throw new Error('--deployBytecode required for deployed');
         builder.addCaveat('deployed', {
           contractAddress: opts.deployAddress,
           salt: opts.deploySalt,
@@ -294,7 +389,8 @@ export async function buildCaveatList(
       }
 
       case 'exactExecution': {
-        if (!opts.execTarget) throw new Error('--execTarget required for exactExecution');
+        if (!opts.execTarget)
+          throw new Error('--execTarget required for exactExecution');
         builder.addCaveat('exactExecution', {
           execution: {
             target: opts.execTarget,

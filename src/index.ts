@@ -107,13 +107,25 @@ program
   // limitedCalls
   .option('--limit <n>', 'Max number of redemptions', parseInt)
   // timestamp
-  .option('--afterTimestamp <seconds>', 'Valid after timestamp (unix seconds)', parseInt)
-  .option('--beforeTimestamp <seconds>', 'Valid before timestamp (unix seconds)', parseInt)
+  .option(
+    '--afterTimestamp <seconds>',
+    'Valid after timestamp (unix seconds)',
+    parseInt,
+  )
+  .option(
+    '--beforeTimestamp <seconds>',
+    'Valid before timestamp (unix seconds)',
+    parseInt,
+  )
   // blockNumber
   .option('--afterBlock <number>', 'Valid after block number')
   .option('--beforeBlock <number>', 'Valid before block number')
   // redeemer
-  .option('--redeemers <addresses>', 'Allowed redeemer addresses (comma-separated)', commaSplit)
+  .option(
+    '--redeemers <addresses>',
+    'Allowed redeemer addresses (comma-separated)',
+    commaSplit,
+  )
   // nonce
   .option('--nonce <hex>', 'Nonce for bulk revocation')
   // id
@@ -121,9 +133,17 @@ program
   // valueLte
   .option('--maxValue <ether>', 'Max native token value per call')
   // allowedTargets
-  .option('--allowedTargets <addresses>', 'Allowed target addresses (comma-separated)', commaSplit)
+  .option(
+    '--allowedTargets <addresses>',
+    'Allowed target addresses (comma-separated)',
+    commaSplit,
+  )
   // allowedMethods
-  .option('--allowedMethods <selectors>', 'Allowed method selectors (comma-separated)', commaSplit)
+  .option(
+    '--allowedMethods <selectors>',
+    'Allowed method selectors (comma-separated)',
+    commaSplit,
+  )
   // allowedCalldata
   .option('--calldataStartIndex <n>', 'Calldata start index', parseInt)
   .option('--calldataValue <hex>', 'Expected calldata value')
@@ -135,25 +155,55 @@ program
   .option('--paymentRecipient <address>', 'Payment recipient address')
   .option('--paymentAmount <ether>', 'Payment amount in ether')
   // nativeBalanceChange
-  .option('--nativeBalanceRecipient <address>', 'Native balance check recipient')
+  .option(
+    '--nativeBalanceRecipient <address>',
+    'Native balance check recipient',
+  )
   .option('--nativeBalanceAmount <amount>', 'Native balance change amount')
-  .option('--nativeBalanceChangeType <type>', 'Balance change type (increase|decrease)')
+  .option(
+    '--nativeBalanceChangeType <type>',
+    'Balance change type (increase|decrease)',
+  )
   // erc20BalanceChange
-  .option('--erc20BalanceToken <address>', 'ERC-20 balance change token address')
+  .option(
+    '--erc20BalanceToken <address>',
+    'ERC-20 balance change token address',
+  )
   .option('--erc20BalanceRecipient <address>', 'ERC-20 balance check recipient')
   .option('--erc20BalanceAmount <amount>', 'ERC-20 balance change amount')
-  .option('--erc20BalanceChangeType <type>', 'ERC-20 balance change type (increase|decrease)')
+  .option(
+    '--erc20BalanceChangeType <type>',
+    'ERC-20 balance change type (increase|decrease)',
+  )
   // erc721BalanceChange
-  .option('--erc721BalanceToken <address>', 'ERC-721 balance change token address')
-  .option('--erc721BalanceRecipient <address>', 'ERC-721 balance check recipient')
+  .option(
+    '--erc721BalanceToken <address>',
+    'ERC-721 balance change token address',
+  )
+  .option(
+    '--erc721BalanceRecipient <address>',
+    'ERC-721 balance check recipient',
+  )
   .option('--erc721BalanceAmount <amount>', 'ERC-721 balance change amount')
-  .option('--erc721BalanceChangeType <type>', 'ERC-721 balance change type (increase|decrease)')
+  .option(
+    '--erc721BalanceChangeType <type>',
+    'ERC-721 balance change type (increase|decrease)',
+  )
   // erc1155BalanceChange
-  .option('--erc1155BalanceToken <address>', 'ERC-1155 balance change token address')
-  .option('--erc1155BalanceRecipient <address>', 'ERC-1155 balance check recipient')
+  .option(
+    '--erc1155BalanceToken <address>',
+    'ERC-1155 balance change token address',
+  )
+  .option(
+    '--erc1155BalanceRecipient <address>',
+    'ERC-1155 balance check recipient',
+  )
   .option('--erc1155BalanceTokenId <id>', 'ERC-1155 token ID')
   .option('--erc1155BalanceAmount <amount>', 'ERC-1155 balance change amount')
-  .option('--erc1155BalanceChangeType <type>', 'ERC-1155 balance change type (increase|decrease)')
+  .option(
+    '--erc1155BalanceChangeType <type>',
+    'ERC-1155 balance change type (increase|decrease)',
+  )
   // deployed
   .option('--deployAddress <address>', 'Contract address for deploy check')
   .option('--deploySalt <hex>', 'Salt for deploy check')
@@ -194,7 +244,9 @@ program
       exactCalldata: opts.exactCalldata as Hex | undefined,
       paymentRecipient: opts.paymentRecipient as Address | undefined,
       paymentAmount: opts.paymentAmount,
-      nativeBalanceRecipient: opts.nativeBalanceRecipient as Address | undefined,
+      nativeBalanceRecipient: opts.nativeBalanceRecipient as
+        | Address
+        | undefined,
       nativeBalanceAmount: opts.nativeBalanceAmount,
       nativeBalanceChangeType: opts.nativeBalanceChangeType,
       erc20BalanceToken: opts.erc20BalanceToken as Address | undefined,
@@ -202,11 +254,15 @@ program
       erc20BalanceAmount: opts.erc20BalanceAmount,
       erc20BalanceChangeType: opts.erc20BalanceChangeType,
       erc721BalanceToken: opts.erc721BalanceToken as Address | undefined,
-      erc721BalanceRecipient: opts.erc721BalanceRecipient as Address | undefined,
+      erc721BalanceRecipient: opts.erc721BalanceRecipient as
+        | Address
+        | undefined,
       erc721BalanceAmount: opts.erc721BalanceAmount,
       erc721BalanceChangeType: opts.erc721BalanceChangeType,
       erc1155BalanceToken: opts.erc1155BalanceToken as Address | undefined,
-      erc1155BalanceRecipient: opts.erc1155BalanceRecipient as Address | undefined,
+      erc1155BalanceRecipient: opts.erc1155BalanceRecipient as
+        | Address
+        | undefined,
       erc1155BalanceTokenId: opts.erc1155BalanceTokenId,
       erc1155BalanceAmount: opts.erc1155BalanceAmount,
       erc1155BalanceChangeType: opts.erc1155BalanceChangeType,

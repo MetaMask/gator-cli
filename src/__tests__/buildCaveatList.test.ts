@@ -174,7 +174,10 @@ describe('buildCaveatList – nativeTokenPeriodTransfer validation', () => {
   it('throws when missing periodAmount', async () => {
     await expect(
       buildCaveatList(
-        makeOpts({ allow: ['nativeTokenPeriodTransfer'], periodDuration: 3600 }),
+        makeOpts({
+          allow: ['nativeTokenPeriodTransfer'],
+          periodDuration: 3600,
+        }),
         mockPublicClient,
         environment,
       ),
@@ -344,7 +347,10 @@ describe('buildCaveatList – nativeTokenPayment validation', () => {
   it('throws when missing paymentAmount', async () => {
     await expect(
       buildCaveatList(
-        makeOpts({ allow: ['nativeTokenPayment'], paymentRecipient: RECIPIENT }),
+        makeOpts({
+          allow: ['nativeTokenPayment'],
+          paymentRecipient: RECIPIENT,
+        }),
         mockPublicClient,
         environment,
       ),
@@ -398,7 +404,9 @@ describe('buildCaveatList – erc20TransferAmount', () => {
 
     expect(result).toHaveLength(1);
     const caveat = result[0]!;
-    expect(caveat.enforcer).toBe(environment.caveatEnforcers.ERC20TransferAmountEnforcer);
+    expect(caveat.enforcer).toBe(
+      environment.caveatEnforcers.ERC20TransferAmountEnforcer,
+    );
     expect(caveat.terms).toBeDefined();
   });
 });
@@ -543,9 +551,7 @@ describe('buildCaveatList – nonce', () => {
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0]!.enforcer).toBe(
-      environment.caveatEnforcers.NonceEnforcer,
-    );
+    expect(result[0]!.enforcer).toBe(environment.caveatEnforcers.NonceEnforcer);
   });
 });
 
@@ -558,9 +564,7 @@ describe('buildCaveatList – id', () => {
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0]!.enforcer).toBe(
-      environment.caveatEnforcers.IdEnforcer,
-    );
+    expect(result[0]!.enforcer).toBe(environment.caveatEnforcers.IdEnforcer);
   });
 });
 
@@ -774,8 +778,14 @@ describe('buildCaveatList – multiple caveats', () => {
     );
 
     expect(result).toHaveLength(3);
-    expect(result[0]!.enforcer).toBe(environment.caveatEnforcers.NativeTokenTransferAmountEnforcer);
-    expect(result[1]!.enforcer).toBe(environment.caveatEnforcers.LimitedCallsEnforcer);
-    expect(result[2]!.enforcer).toBe(environment.caveatEnforcers.TimestampEnforcer);
+    expect(result[0]!.enforcer).toBe(
+      environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
+    );
+    expect(result[1]!.enforcer).toBe(
+      environment.caveatEnforcers.LimitedCallsEnforcer,
+    );
+    expect(result[2]!.enforcer).toBe(
+      environment.caveatEnforcers.TimestampEnforcer,
+    );
   });
 });
