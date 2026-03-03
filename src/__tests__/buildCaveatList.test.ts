@@ -5,7 +5,6 @@ import { baseSepolia } from 'viem/chains';
 import {
   buildCaveatList,
   buildDelegationAuthority,
-  buildScopeConfig,
 } from '../lib/caveats.js';
 import type { GrantOptions } from '../types.js';
 
@@ -122,7 +121,7 @@ describe('buildDelegationAuthority – scope partitioning', () => {
     );
   });
 
-  it('returns null scope when only non-scope caveats present', async () => {
+  it('returns undefined scope when only non-scope caveats present', async () => {
     const result = await buildDelegationAuthority(
       makeOpts({
         allow: ['limitedCalls', 'timestamp'],
@@ -133,7 +132,7 @@ describe('buildDelegationAuthority – scope partitioning', () => {
       environment,
     );
 
-    expect(result.scope).toBeNull();
+    expect(result.scope).toBeUndefined();
     expect(result.caveats).toHaveLength(2);
   });
 
@@ -153,188 +152,6 @@ describe('buildDelegationAuthority – scope partitioning', () => {
 });
 
 // ---------------------------------------------------------------------------
-// buildScopeConfig – individual scope types
-// ---------------------------------------------------------------------------
-
-describe('buildScopeConfig', () => {
-  it('builds erc20TransferAmount scope', async () => {
-    const scope = await buildScopeConfig(
-      'erc20TransferAmount',
-      makeOpts({ tokenAddress: TOKEN, maxAmount: '10' }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('erc20TransferAmount');
-    expect(scope).toHaveProperty('tokenAddress', TOKEN);
-  });
-
-  it('builds nativeTokenTransferAmount scope', async () => {
-    const scope = await buildScopeConfig(
-      'nativeTokenTransferAmount',
-      makeOpts({ maxAmount: '1.5' }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('nativeTokenTransferAmount');
-  });
-
-  it('builds erc721Transfer scope', async () => {
-    const scope = await buildScopeConfig(
-      'erc721Transfer',
-      makeOpts({ tokenAddress: TOKEN, tokenId: '42' }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('erc721Transfer');
-  });
-
-  it('builds ownershipTransfer scope', async () => {
-    const scope = await buildScopeConfig(
-      'ownershipTransfer',
-      makeOpts({ contractAddress: CONTRACT }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('ownershipTransfer');
-  });
-
-  it('builds nativeTokenPeriodTransfer scope', async () => {
-    const scope = await buildScopeConfig(
-      'nativeTokenPeriodTransfer',
-      makeOpts({ periodAmount: '1', periodDuration: 3600 }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('nativeTokenPeriodTransfer');
-  });
-
-  it('builds nativeTokenStreaming scope', async () => {
-    const scope = await buildScopeConfig(
-      'nativeTokenStreaming',
-      makeOpts({
-        amountPerSecond: '0.001',
-        initialAmount: '0',
-        maxAmount: '100',
-      }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('nativeTokenStreaming');
-  });
-
-  it('builds erc20PeriodTransfer scope', async () => {
-    const scope = await buildScopeConfig(
-      'erc20PeriodTransfer',
-      makeOpts({
-        tokenAddress: TOKEN,
-        periodAmount: '100',
-        periodDuration: 86400,
-      }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('erc20PeriodTransfer');
-  });
-
-  it('builds erc20Streaming scope', async () => {
-    const scope = await buildScopeConfig(
-      'erc20Streaming',
-      makeOpts({
-        tokenAddress: TOKEN,
-        amountPerSecond: '0.01',
-        initialAmount: '0',
-        maxAmount: '1000',
-      }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('erc20Streaming');
-  });
-
-  it('builds functionCall scope', async () => {
-    const scope = await buildScopeConfig(
-      'functionCall',
-      makeOpts({
-        allowedTargets: [CONTRACT],
-        allowedMethods: ['transfer(address,uint256)'],
-      }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('functionCall');
-  });
-
-  it('builds functionCall scope with valueLte', async () => {
-    const scope = await buildScopeConfig(
-      'functionCall',
-      makeOpts({
-        allowedTargets: [CONTRACT],
-        allowedMethods: ['transfer(address,uint256)'],
-        maxValue: '0.01',
-      }),
-      mockPublicClient,
-    );
-    expect(scope.type).toBe('functionCall');
-    expect(
-      (scope as Extract<typeof scope, { type: 'functionCall' }>).valueLte,
-    ).toBeDefined();
-  });
-
-  it('throws for unknown scope type', async () => {
-    await expect(
-      buildScopeConfig('notAScope', makeOpts({}), mockPublicClient),
-    ).rejects.toThrow('Unknown scope type');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Scope validation errors
-// ---------------------------------------------------------------------------
-
-describe('buildScopeConfig – validation', () => {
-  it('erc20TransferAmount requires tokenAddress', async () => {
-    await expect(
-      buildScopeConfig(
-        'erc20TransferAmount',
-        makeOpts({ maxAmount: '10' }),
-        mockPublicClient,
-      ),
-    ).rejects.toThrow('--tokenAddress required');
-  });
-
-  it('erc20TransferAmount requires maxAmount', async () => {
-    await expect(
-      buildScopeConfig(
-        'erc20TransferAmount',
-        makeOpts({ tokenAddress: TOKEN }),
-        mockPublicClient,
-      ),
-    ).rejects.toThrow('--maxAmount required');
-  });
-
-  it('nativeTokenTransferAmount requires maxAmount', async () => {
-    await expect(
-      buildScopeConfig(
-        'nativeTokenTransferAmount',
-        makeOpts({}),
-        mockPublicClient,
-      ),
-    ).rejects.toThrow('--maxAmount required');
-  });
-
-  it('functionCall requires allowedTargets', async () => {
-    await expect(
-      buildScopeConfig(
-        'functionCall',
-        makeOpts({ allowedMethods: ['transfer(address,uint256)'] }),
-        mockPublicClient,
-      ),
-    ).rejects.toThrow('--allowedTargets required');
-  });
-
-  it('functionCall requires allowedMethods', async () => {
-    await expect(
-      buildScopeConfig(
-        'functionCall',
-        makeOpts({ allowedTargets: [CONTRACT] }),
-        mockPublicClient,
-      ),
-    ).rejects.toThrow('--allowedMethods required');
-  });
-});
-
-// ---------------------------------------------------------------------------
 // Custom caveat
 // ---------------------------------------------------------------------------
 
@@ -350,7 +167,7 @@ describe('buildDelegationAuthority – custom caveat', () => {
       environment,
     );
 
-    expect(result.scope).toBeNull();
+    expect(result.scope).toBeUndefined();
     expect(result.caveats).toHaveLength(1);
     expect(result.caveats[0]!.enforcer).toBe(ENFORCER);
     expect(result.caveats[0]!.terms).toBe(TERMS);
@@ -404,159 +221,6 @@ describe('buildDelegationAuthority – custom caveat', () => {
 // ---------------------------------------------------------------------------
 // Non-scope caveats – validation (via buildCaveatList)
 // ---------------------------------------------------------------------------
-
-describe('buildCaveatList – erc20TransferAmount validation', () => {
-  it('throws when missing tokenAddress', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({ allow: ['erc20TransferAmount'], maxAmount: '10' }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--tokenAddress required');
-  });
-
-  it('throws when missing maxAmount', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({ allow: ['erc20TransferAmount'], tokenAddress: TOKEN }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--maxAmount required');
-  });
-});
-
-describe('buildCaveatList – erc20PeriodTransfer validation', () => {
-  it('throws when missing tokenAddress', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({
-          allow: ['erc20PeriodTransfer'],
-          periodAmount: '10',
-          periodDuration: 86400,
-        }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--tokenAddress required');
-  });
-
-  it('throws when missing periodAmount', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({
-          allow: ['erc20PeriodTransfer'],
-          tokenAddress: TOKEN,
-          periodDuration: 86400,
-        }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--periodAmount required');
-  });
-
-  it('throws when missing periodDuration', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({
-          allow: ['erc20PeriodTransfer'],
-          tokenAddress: TOKEN,
-          periodAmount: '10',
-        }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--periodDuration required');
-  });
-});
-
-describe('buildCaveatList – erc721Transfer validation', () => {
-  it('throws when missing tokenAddress', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({ allow: ['erc721Transfer'], tokenId: '1' }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--tokenAddress required');
-  });
-
-  it('throws when missing tokenId', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({ allow: ['erc721Transfer'], tokenAddress: TOKEN }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--tokenId required');
-  });
-});
-
-describe('buildCaveatList – nativeTokenTransferAmount validation', () => {
-  it('throws when missing maxAmount', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({ allow: ['nativeTokenTransferAmount'] }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--maxAmount required');
-  });
-});
-
-describe('buildCaveatList – nativeTokenPeriodTransfer validation', () => {
-  it('throws when missing periodAmount', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({
-          allow: ['nativeTokenPeriodTransfer'],
-          periodDuration: 3600,
-        }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--periodAmount required');
-  });
-
-  it('throws when missing periodDuration', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({ allow: ['nativeTokenPeriodTransfer'], periodAmount: '1' }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--periodDuration required');
-  });
-});
-
-describe('buildCaveatList – nativeTokenStreaming validation', () => {
-  it('throws when missing amountPerSecond', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({
-          allow: ['nativeTokenStreaming'],
-          initialAmount: '1',
-          maxAmount: '100',
-        }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--amountPerSecond required');
-  });
-});
-
-describe('buildCaveatList – ownershipTransfer validation', () => {
-  it('throws when missing contractAddress', async () => {
-    await expect(
-      buildCaveatList(
-        makeOpts({ allow: ['ownershipTransfer'] }),
-        mockPublicClient,
-        environment,
-      ),
-    ).rejects.toThrow('--contractAddress required');
-  });
-});
 
 describe('buildCaveatList – limitedCalls validation', () => {
   it('throws when missing limit', async () => {
@@ -717,67 +381,6 @@ describe('buildCaveatList – deployed validation', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Happy paths – verify real caveats are built (via buildCaveatList)
-// ---------------------------------------------------------------------------
-
-describe('buildCaveatList – erc20TransferAmount', () => {
-  it('produces a caveat with the ERC20TransferAmount enforcer', async () => {
-    const result = await buildCaveatList(
-      makeOpts({
-        allow: ['erc20TransferAmount'],
-        tokenAddress: TOKEN,
-        maxAmount: '10',
-      }),
-      mockPublicClient,
-      environment,
-    );
-
-    expect(result).toHaveLength(1);
-    const caveat = result[0]!;
-    expect(caveat.enforcer).toBe(
-      environment.caveatEnforcers.ERC20TransferAmountEnforcer,
-    );
-    expect(caveat.terms).toBeDefined();
-  });
-});
-
-describe('buildCaveatList – nativeTokenTransferAmount', () => {
-  it('produces a caveat with the NativeTokenTransferAmount enforcer', async () => {
-    const result = await buildCaveatList(
-      makeOpts({
-        allow: ['nativeTokenTransferAmount'],
-        maxAmount: '1.5',
-      }),
-      mockPublicClient,
-      environment,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]!.enforcer).toBe(
-      environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
-    );
-  });
-});
-
-describe('buildCaveatList – erc721Transfer', () => {
-  it('produces a caveat with the ERC721Transfer enforcer', async () => {
-    const result = await buildCaveatList(
-      makeOpts({
-        allow: ['erc721Transfer'],
-        tokenAddress: TOKEN,
-        tokenId: '42',
-      }),
-      mockPublicClient,
-      environment,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]!.enforcer).toBe(
-      environment.caveatEnforcers.ERC721TransferEnforcer,
-    );
-  });
-});
 
 describe('buildCaveatList – limitedCalls', () => {
   it('produces a caveat with the LimitedCalls enforcer', async () => {
@@ -1038,58 +641,6 @@ describe('buildCaveatList – exactExecution', () => {
   });
 });
 
-describe('buildCaveatList – ownershipTransfer', () => {
-  it('produces a caveat with the OwnershipTransfer enforcer', async () => {
-    const result = await buildCaveatList(
-      makeOpts({
-        allow: ['ownershipTransfer'],
-        contractAddress: CONTRACT,
-      }),
-      mockPublicClient,
-      environment,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]!.enforcer).toBe(
-      environment.caveatEnforcers.OwnershipTransferEnforcer,
-    );
-  });
-});
-
-describe('buildCaveatList – nativeTokenPeriodTransfer', () => {
-  it('produces a caveat with provided startDate', async () => {
-    const result = await buildCaveatList(
-      makeOpts({
-        allow: ['nativeTokenPeriodTransfer'],
-        periodAmount: '1.5',
-        periodDuration: 3600,
-        startDate: 1700000000,
-      }),
-      mockPublicClient,
-      environment,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]!.enforcer).toBe(
-      environment.caveatEnforcers.NativeTokenPeriodTransferEnforcer,
-    );
-  });
-
-  it('defaults startDate to current timestamp', async () => {
-    const result = await buildCaveatList(
-      makeOpts({
-        allow: ['nativeTokenPeriodTransfer'],
-        periodAmount: '1',
-        periodDuration: 86400,
-      }),
-      mockPublicClient,
-      environment,
-    );
-
-    expect(result).toHaveLength(1);
-  });
-});
-
 // ---------------------------------------------------------------------------
 // Custom caveat via buildCaveatList
 // ---------------------------------------------------------------------------
@@ -1140,11 +691,11 @@ describe('buildCaveatList – multiple caveats', () => {
   it('produces one caveat per allow entry', async () => {
     const result = await buildCaveatList(
       makeOpts({
-        allow: ['nativeTokenTransferAmount', 'limitedCalls', 'timestamp'],
-        maxAmount: '1',
+        allow: ['limitedCalls', 'timestamp', 'redeemer'],
         limit: 3,
         afterTimestamp: 1700000000,
         beforeTimestamp: 0,
+        redeemers: [RECIPIENT],
       }),
       mockPublicClient,
       environment,
@@ -1152,13 +703,13 @@ describe('buildCaveatList – multiple caveats', () => {
 
     expect(result).toHaveLength(3);
     expect(result[0]!.enforcer).toBe(
-      environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
-    );
-    expect(result[1]!.enforcer).toBe(
       environment.caveatEnforcers.LimitedCallsEnforcer,
     );
-    expect(result[2]!.enforcer).toBe(
+    expect(result[1]!.enforcer).toBe(
       environment.caveatEnforcers.TimestampEnforcer,
+    );
+    expect(result[2]!.enforcer).toBe(
+      environment.caveatEnforcers.RedeemerEnforcer,
     );
   });
 });
