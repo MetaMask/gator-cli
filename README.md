@@ -23,10 +23,10 @@ gator init --profile alice       # named profile
 # 3. Upgrade to EIP-7702 smart account
 gator create
 
-# 4. Grant a permission
+# 4. Grant a permission (use --allow to specify caveat types)
 gator grant \
   --to 0xBOB \
-  --scope erc20TransferAmount \
+  --allow erc20TransferAmount \
   --tokenAddress 0xUSDC \
   --maxAmount 50
 
@@ -58,24 +58,80 @@ To use a named profile, pass `--profile <name>` to `init` and all other commands
 ```bash
 gator init --profile alice
 gator status --profile alice
-gator grant --profile alice --to 0xBOB --scope erc20TransferAmount --tokenAddress 0xUSDC --maxAmount 50
+gator grant --profile alice --to 0xBOB --allow nativeTokenTransferAmount --maxAmount 1
 ```
 
 Named profiles are stored at `~/.gator-cli/profiles/<name>.json`.
 
-## Scopes
+## Granting Permissions
 
-| Scope                       | Required Flags                                                          |
-| --------------------------- | ----------------------------------------------------------------------- |
-| `erc20TransferAmount`       | `--tokenAddress`, `--maxAmount`                                         |
-| `erc20PeriodTransfer`       | `--tokenAddress`, `--periodAmount`, `--periodDuration`                  |
-| `erc20Streaming`            | `--tokenAddress`, `--amountPerSecond`, `--initialAmount`, `--maxAmount` |
-| `erc721Transfer`            | `--tokenAddress`, `--tokenId`                                           |
-| `nativeTokenTransferAmount` | `--maxAmount`                                                           |
-| `nativeTokenPeriodTransfer` | `--periodAmount`, `--periodDuration`                                    |
-| `nativeTokenStreaming`      | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                   |
-| `functionCall`              | `--targets`, `--selectors`                                              |
-| `ownershipTransfer`         | `--contractAddress`                                                     |
+Use the `grant` command with one or more `--allow <type>` flags to attach caveats to a delegation. Each caveat type has its own set of required flags.
+
+### Examples
+
+```bash
+# Allow up to 50 USDC transfers
+gator grant --to 0xBOB \
+  --allow erc20TransferAmount \
+  --tokenAddress 0xUSDC --maxAmount 50
+
+# Allow up to 1 ETH in native token transfers, limited to 3 calls
+gator grant --to 0xBOB \
+  --allow nativeTokenTransferAmount --maxAmount 1 \
+  --allow limitedCalls --limit 3
+
+# Time-bounded delegation
+gator grant --to 0xBOB \
+  --allow nativeTokenTransferAmount --maxAmount 0.5 \
+  --allow timestamp --afterTimestamp 1700000000 --beforeTimestamp 1800000000
+
+# Restrict to specific redeemer addresses
+gator grant --to 0xBOB \
+  --allow nativeTokenTransferAmount --maxAmount 1 \
+  --allow redeemer --redeemers 0xADDR1,0xADDR2
+```
+
+### Caveat Types
+
+| Caveat Type                  | Required Flags                                                                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `erc20TransferAmount`        | `--tokenAddress`, `--maxAmount`                                                                                                         |
+| `erc20PeriodTransfer`        | `--tokenAddress`, `--periodAmount`, `--periodDuration`                                                                                  |
+| `erc20Streaming`             | `--tokenAddress`, `--amountPerSecond`, `--initialAmount`, `--maxAmount`                                                                 |
+| `erc721Transfer`             | `--tokenAddress`, `--tokenId`                                                                                                           |
+| `nativeTokenTransferAmount`  | `--maxAmount`                                                                                                                           |
+| `nativeTokenPeriodTransfer`  | `--periodAmount`, `--periodDuration`                                                                                                    |
+| `nativeTokenStreaming`       | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                                                                                   |
+| `ownershipTransfer`          | `--contractAddress`                                                                                                                     |
+| `limitedCalls`               | `--limit`                                                                                                                               |
+| `timestamp`                  | `--afterTimestamp`, `--beforeTimestamp`                                                                                                  |
+| `blockNumber`                | `--afterBlock`, `--beforeBlock`                                                                                                         |
+| `redeemer`                   | `--redeemers` (comma-separated)                                                                                                         |
+| `nonce`                      | `--nonce` (hex)                                                                                                                         |
+| `id`                         | `--caveatId`                                                                                                                            |
+| `valueLte`                   | `--maxValue`                                                                                                                            |
+| `allowedTargets`             | `--allowedTargets` (comma-separated)                                                                                                    |
+| `allowedMethods`             | `--allowedMethods` (comma-separated)                                                                                                    |
+| `allowedCalldata`            | `--calldataStartIndex`, `--calldataValue`                                                                                               |
+| `argsEqualityCheck`          | `--argsCheck` (hex)                                                                                                                     |
+| `exactCalldata`              | `--exactCalldata` (hex)                                                                                                                 |
+| `exactExecution`             | `--execTarget`                                                                                                                          |
+| `nativeTokenPayment`         | `--paymentRecipient`, `--paymentAmount`                                                                                                 |
+| `nativeBalanceChange`        | `--nativeBalanceRecipient`, `--nativeBalanceAmount`, `--nativeBalanceChangeType`                                                         |
+| `erc20BalanceChange`         | `--erc20BalanceToken`, `--erc20BalanceRecipient`, `--erc20BalanceAmount`, `--erc20BalanceChangeType`                                    |
+| `erc721BalanceChange`        | `--erc721BalanceToken`, `--erc721BalanceRecipient`, `--erc721BalanceAmount`, `--erc721BalanceChangeType`                                |
+| `erc1155BalanceChange`       | `--erc1155BalanceToken`, `--erc1155BalanceRecipient`, `--erc1155BalanceTokenId`, `--erc1155BalanceAmount`, `--erc1155BalanceChangeType` |
+| `deployed`                   | `--deployAddress`, `--deploySalt`, `--deployBytecode`                                                                                   |
+
+### Optional Flags
+
+Some caveats accept optional flags with sensible defaults:
+
+- **Periodic caveats** (`erc20PeriodTransfer`, `nativeTokenPeriodTransfer`): `--startDate` defaults to the current timestamp.
+- **Streaming caveats** (`erc20Streaming`, `nativeTokenStreaming`): `--startTime` defaults to the current timestamp.
+- **`timestamp`**: both `--afterTimestamp` and `--beforeTimestamp` default to `0` (no bound) when omitted.
+- **`blockNumber`**: both `--afterBlock` and `--beforeBlock` default to `0` when omitted.
+- **`exactExecution`**: `--execValue` defaults to `0` and `--execCalldata` defaults to `0x`.
 
 ## Redeeming Permissions
 
@@ -161,5 +217,6 @@ Then run `gator create` to upgrade the EOA to an EIP-7702 smart account.
 ## Useful Links
 
 - [MetaMask Smart Accounts Kit Quick Start](https://docs.metamask.io/smart-accounts-kit/get-started/quickstart/)
+- [Caveats Reference](https://docs.metamask.io/smart-accounts-kit/reference/delegation/caveats)
 - [ERC-7710 Specification](https://eips.ethereum.org/EIPS/eip-7710)
 - [MetaMask Smart Accounts Kit docs](https://docs.metamask.io/smart-accounts-kit)
