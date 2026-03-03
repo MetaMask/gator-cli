@@ -93,35 +93,35 @@ gator grant --to 0xBOB \
 
 ### Caveat Types
 
-| Caveat Type                  | Required Flags                                                                                                                          |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `erc20TransferAmount`        | `--tokenAddress`, `--maxAmount`                                                                                                         |
-| `erc20PeriodTransfer`        | `--tokenAddress`, `--periodAmount`, `--periodDuration`                                                                                  |
-| `erc20Streaming`             | `--tokenAddress`, `--amountPerSecond`, `--initialAmount`, `--maxAmount`                                                                 |
-| `erc721Transfer`             | `--tokenAddress`, `--tokenId`                                                                                                           |
-| `nativeTokenTransferAmount`  | `--maxAmount`                                                                                                                           |
-| `nativeTokenPeriodTransfer`  | `--periodAmount`, `--periodDuration`                                                                                                    |
-| `nativeTokenStreaming`       | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                                                                                   |
-| `ownershipTransfer`          | `--contractAddress`                                                                                                                     |
-| `limitedCalls`               | `--limit`                                                                                                                               |
-| `timestamp`                  | `--afterTimestamp`, `--beforeTimestamp`                                                                                                  |
-| `blockNumber`                | `--afterBlock`, `--beforeBlock`                                                                                                         |
-| `redeemer`                   | `--redeemers` (comma-separated)                                                                                                         |
-| `nonce`                      | `--nonce` (hex)                                                                                                                         |
-| `id`                         | `--caveatId`                                                                                                                            |
-| `valueLte`                   | `--maxValue`                                                                                                                            |
-| `allowedTargets`             | `--allowedTargets` (comma-separated)                                                                                                    |
-| `allowedMethods`             | `--allowedMethods` (comma-separated)                                                                                                    |
-| `allowedCalldata`            | `--calldataStartIndex`, `--calldataValue`                                                                                               |
-| `argsEqualityCheck`          | `--argsCheck` (hex)                                                                                                                     |
-| `exactCalldata`              | `--exactCalldata` (hex)                                                                                                                 |
-| `exactExecution`             | `--execTarget`                                                                                                                          |
-| `nativeTokenPayment`         | `--paymentRecipient`, `--paymentAmount`                                                                                                 |
-| `nativeBalanceChange`        | `--nativeBalanceRecipient`, `--nativeBalanceAmount`, `--nativeBalanceChangeType`                                                         |
-| `erc20BalanceChange`         | `--erc20BalanceToken`, `--erc20BalanceRecipient`, `--erc20BalanceAmount`, `--erc20BalanceChangeType`                                    |
-| `erc721BalanceChange`        | `--erc721BalanceToken`, `--erc721BalanceRecipient`, `--erc721BalanceAmount`, `--erc721BalanceChangeType`                                |
-| `erc1155BalanceChange`       | `--erc1155BalanceToken`, `--erc1155BalanceRecipient`, `--erc1155BalanceTokenId`, `--erc1155BalanceAmount`, `--erc1155BalanceChangeType` |
-| `deployed`                   | `--deployAddress`, `--deploySalt`, `--deployBytecode`                                                                                   |
+| Caveat Type                 | Required Flags                                                                                                                          |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `erc20TransferAmount`       | `--tokenAddress`, `--maxAmount`                                                                                                         |
+| `erc20PeriodTransfer`       | `--tokenAddress`, `--periodAmount`, `--periodDuration`                                                                                  |
+| `erc20Streaming`            | `--tokenAddress`, `--amountPerSecond`, `--initialAmount`, `--maxAmount`                                                                 |
+| `erc721Transfer`            | `--tokenAddress`, `--tokenId`                                                                                                           |
+| `nativeTokenTransferAmount` | `--maxAmount`                                                                                                                           |
+| `nativeTokenPeriodTransfer` | `--periodAmount`, `--periodDuration`                                                                                                    |
+| `nativeTokenStreaming`      | `--amountPerSecond`, `--initialAmount`, `--maxAmount`                                                                                   |
+| `ownershipTransfer`         | `--contractAddress`                                                                                                                     |
+| `limitedCalls`              | `--limit`                                                                                                                               |
+| `timestamp`                 | `--afterTimestamp`, `--beforeTimestamp`                                                                                                 |
+| `blockNumber`               | `--afterBlock`, `--beforeBlock`                                                                                                         |
+| `redeemer`                  | `--redeemers` (comma-separated)                                                                                                         |
+| `nonce`                     | `--nonce` (hex)                                                                                                                         |
+| `id`                        | `--caveatId`                                                                                                                            |
+| `valueLte`                  | `--maxValue`                                                                                                                            |
+| `allowedTargets`            | `--allowedTargets` (comma-separated)                                                                                                    |
+| `allowedMethods`            | `--allowedMethods` (comma-separated)                                                                                                    |
+| `allowedCalldata`           | `--calldataStartIndex`, `--calldataValue`                                                                                               |
+| `argsEqualityCheck`         | `--argsCheck` (hex)                                                                                                                     |
+| `exactCalldata`             | `--exactCalldata` (hex)                                                                                                                 |
+| `exactExecution`            | `--execTarget`                                                                                                                          |
+| `nativeTokenPayment`        | `--paymentRecipient`, `--paymentAmount`                                                                                                 |
+| `nativeBalanceChange`       | `--nativeBalanceRecipient`, `--nativeBalanceAmount`, `--nativeBalanceChangeType`                                                        |
+| `erc20BalanceChange`        | `--erc20BalanceToken`, `--erc20BalanceRecipient`, `--erc20BalanceAmount`, `--erc20BalanceChangeType`                                    |
+| `erc721BalanceChange`       | `--erc721BalanceToken`, `--erc721BalanceRecipient`, `--erc721BalanceAmount`, `--erc721BalanceChangeType`                                |
+| `erc1155BalanceChange`      | `--erc1155BalanceToken`, `--erc1155BalanceRecipient`, `--erc1155BalanceTokenId`, `--erc1155BalanceAmount`, `--erc1155BalanceChangeType` |
+| `deployed`                  | `--deployAddress`, `--deploySalt`, `--deployBytecode`                                                                                   |
 
 ### Optional Flags
 
