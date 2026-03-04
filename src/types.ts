@@ -26,25 +26,82 @@ export interface ProfileOptions {
 
 export interface GrantOptions extends ProfileOptions {
   to: Address;
-  scope: string;
-  // Token scopes
+  allow: string[];
+  // Token caveats (erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer)
   tokenAddress?: Address;
   maxAmount?: string;
   tokenId?: string;
-  // Periodic scopes
+  // Periodic caveats (erc20PeriodTransfer, nativeTokenPeriodTransfer)
   periodAmount?: string;
   periodDuration?: number;
   startDate?: number;
-  // Streaming scopes
+  // Streaming caveats (erc20Streaming, nativeTokenStreaming)
   amountPerSecond?: string;
   initialAmount?: string;
   startTime?: number;
-  // Function call scope
-  targets?: string[];
-  selectors?: string[];
-  valueLte?: string;
   // Ownership transfer
   contractAddress?: Address;
+  // limitedCalls
+  limit?: number;
+  // timestamp
+  afterTimestamp?: number;
+  beforeTimestamp?: number;
+  // blockNumber
+  afterBlock?: string;
+  beforeBlock?: string;
+  // redeemer
+  redeemers?: string[];
+  // nonce
+  nonce?: Hex;
+  // id
+  caveatId?: string;
+  // valueLte
+  maxValue?: string;
+  // allowedTargets
+  allowedTargets?: string[];
+  // allowedMethods
+  allowedMethods?: string[];
+  // allowedCalldata
+  calldataStartIndex?: number;
+  calldataValue?: Hex;
+  // argsEqualityCheck
+  argsCheck?: Hex;
+  // exactCalldata
+  exactCalldata?: Hex;
+  // nativeTokenPayment
+  paymentRecipient?: Address;
+  paymentAmount?: string;
+  // nativeBalanceChange
+  nativeBalanceRecipient?: Address;
+  nativeBalanceAmount?: string;
+  nativeBalanceChangeType?: string;
+  // erc20BalanceChange
+  erc20BalanceToken?: Address;
+  erc20BalanceRecipient?: Address;
+  erc20BalanceAmount?: string;
+  erc20BalanceChangeType?: string;
+  // erc721BalanceChange
+  erc721BalanceToken?: Address;
+  erc721BalanceRecipient?: Address;
+  erc721BalanceAmount?: string;
+  erc721BalanceChangeType?: string;
+  // erc1155BalanceChange
+  erc1155BalanceToken?: Address;
+  erc1155BalanceRecipient?: Address;
+  erc1155BalanceTokenId?: string;
+  erc1155BalanceAmount?: string;
+  erc1155BalanceChangeType?: string;
+  // deployed
+  deployAddress?: Address;
+  deploySalt?: Hex;
+  deployBytecode?: Hex;
+  // exactExecution
+  execTarget?: Address;
+  execValue?: string;
+  execCalldata?: Hex;
+  // custom caveat enforcer
+  enforcerAddress?: Address;
+  enforcerTerms?: Hex;
 }
 
 export type RedeemAction =

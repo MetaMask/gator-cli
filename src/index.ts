@@ -74,46 +74,158 @@ program
   });
 
 // grant
+function collect(val: string, arr: string[]) {
+  arr.push(val);
+  return arr;
+}
+
 program
   .command('grant')
-  .description('Create, sign, and store a delegation with a predefined scope')
+  .description('Create, sign, and store a delegation with caveats')
   .requiredOption('--to <address>', 'Delegate address')
   .option('--profile <name>', 'Profile name', 'default')
-  .requiredOption(
-    '--scope <type>',
-    'Scope type: erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, functionCall, ownershipTransfer',
+  .option(
+    '--allow <type>',
+    'Allow permission type (list): erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, ownershipTransfer, functionCall, limitedCalls, timestamp, blockNumber, redeemer, nonce, id, valueLte, allowedTargets, allowedMethods, allowedCalldata, argsEqualityCheck, exactCalldata, nativeTokenPayment, nativeBalanceChange, erc20BalanceChange, erc721BalanceChange, erc1155BalanceChange, deployed, exactExecution, custom',
+    collect,
+    [],
   )
-  // Token scopes
+  // Token caveats
   .option('--tokenAddress <address>', 'ERC-20/721 token contract address')
   .option('--maxAmount <amount>', "Max amount (human readable, e.g. '10')")
   .option('--tokenId <id>', 'ERC-721 token ID')
-  // Periodic scopes
+  // Periodic caveats
   .option('--periodAmount <amount>', 'Amount per period (human readable)')
   .option('--periodDuration <seconds>', 'Period duration in seconds', parseInt)
   .option('--startDate <timestamp>', 'Start date (unix seconds)', parseInt)
-  // Streaming scopes
+  // Streaming caveats
   .option('--amountPerSecond <amount>', 'Streaming rate (human readable)')
   .option('--initialAmount <amount>', 'Initial released amount')
   .option('--startTime <timestamp>', 'Start time (unix seconds)', parseInt)
-  // Function call scope
-  .option(
-    '--targets <addresses>',
-    'Contract addresses (comma-separated)',
-    commaSplit,
-  )
-  .option(
-    '--selectors <sigs>',
-    'Function signatures (comma-separated)',
-    commaSplit,
-  )
-  .option('--valueLte <ether>', 'Max native token value per call')
   // Ownership transfer
   .option('--contractAddress <address>', 'Contract for ownership transfer')
+  // limitedCalls
+  .option('--limit <n>', 'Max number of redemptions', parseInt)
+  // timestamp
+  .option(
+    '--afterTimestamp <seconds>',
+    'Valid after timestamp (unix seconds)',
+    parseInt,
+  )
+  .option(
+    '--beforeTimestamp <seconds>',
+    'Valid before timestamp (unix seconds)',
+    parseInt,
+  )
+  // blockNumber
+  .option('--afterBlock <number>', 'Valid after block number')
+  .option('--beforeBlock <number>', 'Valid before block number')
+  // redeemer
+  .option(
+    '--redeemers <addresses>',
+    'Allowed redeemer addresses (comma-separated)',
+    commaSplit,
+  )
+  // nonce
+  .option('--nonce <hex>', 'Nonce for bulk revocation')
+  // id
+  .option('--caveatId <number>', 'Caveat ID for mutual revocation')
+  // valueLte
+  .option('--maxValue <ether>', 'Max native token value per call')
+  // allowedTargets
+  .option(
+    '--allowedTargets <addresses>',
+    'Allowed target addresses (comma-separated)',
+    commaSplit,
+  )
+  // allowedMethods
+  .option(
+    '--allowedMethods <selectors>',
+    'Allowed method selectors (comma-separated)',
+    commaSplit,
+  )
+  // allowedCalldata
+  .option('--calldataStartIndex <n>', 'Calldata start index', parseInt)
+  .option('--calldataValue <hex>', 'Expected calldata value')
+  // argsEqualityCheck
+  .option('--argsCheck <hex>', 'Expected args for equality check')
+  // exactCalldata
+  .option('--exactCalldata <hex>', 'Exact calldata to match')
+  // nativeTokenPayment
+  .option('--paymentRecipient <address>', 'Payment recipient address')
+  .option('--paymentAmount <ether>', 'Payment amount in ether')
+  // nativeBalanceChange
+  .option(
+    '--nativeBalanceRecipient <address>',
+    'Native balance check recipient',
+  )
+  .option('--nativeBalanceAmount <amount>', 'Native balance change amount')
+  .option(
+    '--nativeBalanceChangeType <type>',
+    'Balance change type (increase|decrease)',
+  )
+  // erc20BalanceChange
+  .option(
+    '--erc20BalanceToken <address>',
+    'ERC-20 balance change token address',
+  )
+  .option('--erc20BalanceRecipient <address>', 'ERC-20 balance check recipient')
+  .option('--erc20BalanceAmount <amount>', 'ERC-20 balance change amount')
+  .option(
+    '--erc20BalanceChangeType <type>',
+    'ERC-20 balance change type (increase|decrease)',
+  )
+  // erc721BalanceChange
+  .option(
+    '--erc721BalanceToken <address>',
+    'ERC-721 balance change token address',
+  )
+  .option(
+    '--erc721BalanceRecipient <address>',
+    'ERC-721 balance check recipient',
+  )
+  .option('--erc721BalanceAmount <amount>', 'ERC-721 balance change amount')
+  .option(
+    '--erc721BalanceChangeType <type>',
+    'ERC-721 balance change type (increase|decrease)',
+  )
+  // erc1155BalanceChange
+  .option(
+    '--erc1155BalanceToken <address>',
+    'ERC-1155 balance change token address',
+  )
+  .option(
+    '--erc1155BalanceRecipient <address>',
+    'ERC-1155 balance check recipient',
+  )
+  .option('--erc1155BalanceTokenId <id>', 'ERC-1155 token ID')
+  .option('--erc1155BalanceAmount <amount>', 'ERC-1155 balance change amount')
+  .option(
+    '--erc1155BalanceChangeType <type>',
+    'ERC-1155 balance change type (increase|decrease)',
+  )
+  // deployed
+  .option('--deployAddress <address>', 'Contract address for deploy check')
+  .option('--deploySalt <hex>', 'Salt for deploy check')
+  .option('--deployBytecode <hex>', 'Bytecode for deploy check')
+  // exactExecution
+  .option('--execTarget <address>', 'Exact execution target address')
+  .option('--execValue <ether>', 'Exact execution value')
+  .option('--execCalldata <hex>', 'Exact execution calldata')
+  // custom caveat enforcer
+  .option(
+    '--enforcerAddress <address>',
+    'Custom caveat enforcer contract address',
+  )
+  .option(
+    '--enforcerTerms <hex>',
+    'ABI-encoded terms for custom caveat enforcer',
+  )
   .action((opts) => {
     grant({
       profile: opts.profile,
       to: opts.to as Address,
-      scope: opts.scope,
+      allow: opts.allow,
       tokenAddress: opts.tokenAddress as Address | undefined,
       maxAmount: opts.maxAmount,
       tokenId: opts.tokenId,
@@ -123,10 +235,54 @@ program
       amountPerSecond: opts.amountPerSecond,
       initialAmount: opts.initialAmount,
       startTime: opts.startTime,
-      targets: opts.targets,
-      selectors: opts.selectors,
-      valueLte: opts.valueLte,
       contractAddress: opts.contractAddress as Address | undefined,
+      limit: opts.limit,
+      afterTimestamp: opts.afterTimestamp,
+      beforeTimestamp: opts.beforeTimestamp,
+      afterBlock: opts.afterBlock,
+      beforeBlock: opts.beforeBlock,
+      redeemers: opts.redeemers,
+      nonce: opts.nonce as Hex | undefined,
+      caveatId: opts.caveatId,
+      maxValue: opts.maxValue,
+      allowedTargets: opts.allowedTargets,
+      allowedMethods: opts.allowedMethods,
+      calldataStartIndex: opts.calldataStartIndex,
+      calldataValue: opts.calldataValue as Hex | undefined,
+      argsCheck: opts.argsCheck as Hex | undefined,
+      exactCalldata: opts.exactCalldata as Hex | undefined,
+      paymentRecipient: opts.paymentRecipient as Address | undefined,
+      paymentAmount: opts.paymentAmount,
+      nativeBalanceRecipient: opts.nativeBalanceRecipient as
+        | Address
+        | undefined,
+      nativeBalanceAmount: opts.nativeBalanceAmount,
+      nativeBalanceChangeType: opts.nativeBalanceChangeType,
+      erc20BalanceToken: opts.erc20BalanceToken as Address | undefined,
+      erc20BalanceRecipient: opts.erc20BalanceRecipient as Address | undefined,
+      erc20BalanceAmount: opts.erc20BalanceAmount,
+      erc20BalanceChangeType: opts.erc20BalanceChangeType,
+      erc721BalanceToken: opts.erc721BalanceToken as Address | undefined,
+      erc721BalanceRecipient: opts.erc721BalanceRecipient as
+        | Address
+        | undefined,
+      erc721BalanceAmount: opts.erc721BalanceAmount,
+      erc721BalanceChangeType: opts.erc721BalanceChangeType,
+      erc1155BalanceToken: opts.erc1155BalanceToken as Address | undefined,
+      erc1155BalanceRecipient: opts.erc1155BalanceRecipient as
+        | Address
+        | undefined,
+      erc1155BalanceTokenId: opts.erc1155BalanceTokenId,
+      erc1155BalanceAmount: opts.erc1155BalanceAmount,
+      erc1155BalanceChangeType: opts.erc1155BalanceChangeType,
+      deployAddress: opts.deployAddress as Address | undefined,
+      deploySalt: opts.deploySalt as Hex | undefined,
+      deployBytecode: opts.deployBytecode as Hex | undefined,
+      execTarget: opts.execTarget as Address | undefined,
+      execValue: opts.execValue,
+      execCalldata: opts.execCalldata as Hex | undefined,
+      enforcerAddress: opts.enforcerAddress as Address | undefined,
+      enforcerTerms: opts.enforcerTerms as Hex | undefined,
     });
   });
 
