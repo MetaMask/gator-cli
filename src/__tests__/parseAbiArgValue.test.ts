@@ -96,7 +96,10 @@ describe('parseAbiArgValue – dynamic arrays', () => {
   it('parses address[] and passes each element through', () => {
     const a1 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
     const a2 = '0xEC12d2450934E3c158129D0B387739506C789b07';
-    const result = parseAbiArgValue(JSON.stringify([a1, a2]), param('address[]'));
+    const result = parseAbiArgValue(
+      JSON.stringify([a1, a2]),
+      param('address[]'),
+    );
     expect(result).toEqual([a1, a2]);
   });
 
@@ -170,10 +173,17 @@ describe('parseAbiArgValue – tuples', () => {
     ];
     const outerComponents: AbiParameter[] = [
       { name: 'id', type: 'uint256' } as AbiParameter,
-      { name: 'point', type: 'tuple', components: innerComponents } as AbiParameter,
+      {
+        name: 'point',
+        type: 'tuple',
+        components: innerComponents,
+      } as AbiParameter,
     ];
 
-    const value = JSON.stringify({ id: '1', point: JSON.stringify({ x: '10', y: '20' }) });
+    const value = JSON.stringify({
+      id: '1',
+      point: JSON.stringify({ x: '10', y: '20' }),
+    });
     const result = parseAbiArgValue(value, param('tuple', outerComponents));
 
     expect(result).toEqual([1n, [10n, 20n]]);

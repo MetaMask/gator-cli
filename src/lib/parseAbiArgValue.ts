@@ -12,20 +12,17 @@ import type { AbiParameter } from 'viem';
  *  4. Integers (uint* / int*) — BigInt
  *  5. Everything else (address, bytes*, string) — pass-through
  */
-export function parseAbiArgValue(
-  value: string,
-  param: AbiParameter,
-): unknown {
+export function parseAbiArgValue(value: string, param: AbiParameter): unknown {
   // Dynamic (T[]) and fixed-size (T[N]) arrays: strip the trailing bracket,
   // JSON-parse the value, and recurse on each element with the base type.
   if (param.type.match(/\[\d*\]$/)) {
     const baseType = param.type.replace(/\[\d*\]$/, '');
     const parsed = JSON.parse(value);
     return parsed.map((item: unknown) =>
-      parseAbiArgValue(
-        String(item),
-        { ...param, type: baseType } as AbiParameter,
-      ),
+      parseAbiArgValue(String(item), {
+        ...param,
+        type: baseType,
+      } as AbiParameter),
     );
   }
 
