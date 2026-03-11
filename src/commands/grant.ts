@@ -1,4 +1,4 @@
-import { toHex, type Hex } from 'viem';
+import { toHex } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import {
   Implementation,
@@ -25,6 +25,20 @@ export async function grant(opts: GrantOptions) {
 
   const publicClient = getPublicClient(chain, config.rpcUrl);
   const walletClient = getWalletClient(account, chain, config.rpcUrl);
+  const storageClient = getStorageClient(config, opts.profile);
+
+  if (opts.parentDelegation) {
+    // This will throw when parent delegation is not found in storage. 
+    const parentDelegation = await storageClient.getDelegation(
+      opts.parentDelegation,
+    );
+    const parentDelegate = parentDelegation.delegate.toLowerCase();
+    if (parentDelegate !== account.address.toLowerCase()) {
+      throw new Error(
+        `Current account ${account.address} is not the delegate of parent delegation ${opts.parentDelegation} (delegate is ${parentDelegation.delegate})`,
+      );
+    }
+  }
 
   const fromSmartAccount = await toMetaMaskSmartAccount({
     client: publicClient,
@@ -62,7 +76,7 @@ export async function grant(opts: GrantOptions) {
     delegation = {
       delegate: opts.to,
       delegator: fromSmartAccount.address,
-      authority: opts.parentDelegation ?? (ROOT_AUTHORITY as Hex),
+      authority: opts.parentDelegation ?? ROOT_AUTHORITY,
       caveats,
       salt,
       signature: '0x00',
@@ -74,7 +88,6 @@ export async function grant(opts: GrantOptions) {
   const signedDelegation = { ...delegation, signature };
 
   console.log('  Storing...');
-  const storageClient = getStorageClient(config, opts.profile);
   const delegationHash = await storageClient.storeDelegation(signedDelegation);
 
   console.log(`\nPermission granted and stored`);
@@ -82,4 +95,7 @@ export async function grant(opts: GrantOptions) {
   console.log(`  Allow:     ${opts.allow.join(', ')}`);
   console.log(`  From:      ${account.address}`);
   console.log(`  To:        ${opts.to}`);
+  if (opts.parentDelegation) {
+    console.log(`  Parent:    ${opts.parentDelegation}`);
+  }
 }
