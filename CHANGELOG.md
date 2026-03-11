@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0-alpha.2]
 
-### Uncategorized
+### Added
 
-- feat: add support for caveats
-- feat: accept delegationHash option for redeem
-- fix: getDelegationChain issue
+- Add support for full list of caveats.
+- Accept `delegationHash` option for redeem.
+
+### Fixed
+
+- Fix `getDelegationChain` issue.
 
 ## [0.1.0-alpha.1]
 
