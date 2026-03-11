@@ -13,6 +13,7 @@ import {
   type AbiParameter,
 } from 'viem';
 import { getTokenDecimals } from './token.js';
+import { parseAbiArgValue } from './parseAbiArgValue.js';
 import type { RedeemOptions } from '../types.js';
 
 // From https://github.com/OpenZeppelin/openzeppelin-contracts/blob/8ff78ffb6e78463f070eab59487b4ba30481b53c/contracts/access/Ownable.sol#L84
@@ -107,14 +108,9 @@ export async function buildExecution(
       if (paramTypes.length === 0 || !opts.args?.length) {
         callData = selector;
       } else {
-        const args = opts.args.map((arg, i) => {
-          const pType = paramTypes[i]!.type;
-          if (pType?.startsWith('uint') || pType?.startsWith('int')) {
-            return BigInt(arg);
-          }
-          if (pType === 'bool') return arg === 'true';
-          return arg;
-        });
+        const args = opts.args.map((arg, i) =>
+          parseAbiArgValue(arg, paramTypes[i]!),
+        );
 
         const encoded = encodeAbiParameters(paramTypes, args);
         callData = concat([selector, encoded]);
