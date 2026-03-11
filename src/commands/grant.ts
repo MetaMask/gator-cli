@@ -40,6 +40,10 @@ export async function grant(opts: GrantOptions) {
     fromSmartAccount.environment,
   );
 
+  if (opts.parentDelegation) {
+    console.log(`  Sub-delegation of: ${opts.parentDelegation}`);
+  }
+
   let delegation: Delegation;
   const salt = toHex(crypto.getRandomValues(new Uint8Array(32)));
   if (scope) {
@@ -48,6 +52,7 @@ export async function grant(opts: GrantOptions) {
       from: fromSmartAccount.address,
       to: opts.to,
       environment: fromSmartAccount.environment,
+      parentDelegation: opts.parentDelegation,
       scope,
       caveats: caveats,
       salt,
@@ -57,7 +62,7 @@ export async function grant(opts: GrantOptions) {
     delegation = {
       delegate: opts.to,
       delegator: fromSmartAccount.address,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: opts.parentDelegation ?? (ROOT_AUTHORITY as Hex),
       caveats,
       salt,
       signature: '0x00',
