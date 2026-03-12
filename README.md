@@ -98,6 +98,25 @@ gator grant --to 0xBOB \
   --allow custom --enforcerAddress 0xDeployed --enforcerTerms 0xEncoded
 ```
 
+### Sub-delegation
+
+A delegate can further delegate their permissions to another party by passing the `--parentDelegation` flag with the hash of the parent delegation. This creates a delegation chain where the new delegation's authority references the parent instead of the root.
+
+```bash
+# 1. Alice grants Bob a root delegation
+gator grant --profile alice --to 0xBOB \
+  --allow nativeTokenTransferAmount --maxAmount 1
+
+# The output includes the delegation hash, e.g. 0xabc123...
+
+# 2. Bob sub-delegates to Carol, referencing the parent hash
+gator grant --profile bob --to 0xCAROL \
+  --allow limitedCalls --limit 5 \
+  --parentDelegation 0xabc123...
+```
+
+When `--parentDelegation` is omitted, the delegation is created as a root delegation (authority = `ROOT_AUTHORITY`).
+
 ### Caveat Types
 
 | Caveat Type                 | Required Flags                                                                                                                          |
@@ -136,6 +155,7 @@ gator grant --to 0xBOB \
 
 Some caveats accept optional flags with sensible defaults:
 
+- **`--parentDelegation`**: Parent delegation hash for sub-delegation (use the hash from `grant` output or `gator inspect`). When omitted, the delegation is a root delegation.
 - **Periodic caveats** (`erc20PeriodTransfer`, `nativeTokenPeriodTransfer`): `--startDate` defaults to the current timestamp.
 - **Streaming caveats** (`erc20Streaming`, `nativeTokenStreaming`): `--startTime` defaults to the current timestamp.
 - **`timestamp`**: both `--afterTimestamp` and `--beforeTimestamp` default to `0` (no bound) when omitted.
