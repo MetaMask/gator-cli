@@ -2,6 +2,16 @@
 
 > **Alpha version:** This CLI stores your private key in a local JSON file (`~/.gator-cli/`). Do not use it with accounts holding significant funds.
 
+## What is this?
+
+**gator-cli** is a command-line tool for the [MetaMask Smart Accounts / delegation framework](https://docs.metamask.io/smart-accounts-kit/). It lets you:
+
+- **Turn an EOA into an EIP-7702 smart account** and manage it from the terminal.
+- **Grant delegations** — give another address permission to act on your behalf (e.g. spend up to 50 USDC, send ETH, call specific contract methods), with **caveats** that limit amount, time window, allowed targets, etc.
+- **Redeem and revoke** those delegations from the CLI.
+
+Use it for scripting, testing, or building tooling around delegated permissions without a browser. It's the CLI counterpart to the in-wallet delegation UX in MetaMask.
+
 ## Installation
 
 Yarn:
