@@ -12,7 +12,7 @@ import { dirname, join } from 'node:path';
 import type { PermissionsConfig } from '../types.js';
 import { Delegation } from '@metamask/smart-accounts-kit';
 import { DELEGATIONS_DIR } from './constants.js';
-import { getDelegationHashOffchain } from '@metamask/smart-accounts-kit/utils';
+import { hashDelegation } from '@metamask/smart-accounts-kit/utils';
 
 const DELEGATION_STORAGE_API_URL =
   'https://passkeys.dev-api.cx.metamask.io/api/v0';
@@ -135,7 +135,7 @@ export function getStorageClient(config: PermissionsConfig, profile?: string) {
           throw new Error('Delegation must be signed to be stored');
         }
 
-        const expectedHash = getDelegationHashOffchain(delegation);
+        const expectedHash = hashDelegation(delegation);
         const delegations = loadLocalDelegations(profile);
         const existingIndex = delegations.findIndex(
           (stored) => stored.hash.toLowerCase() === expectedHash.toLowerCase(),
@@ -247,7 +247,7 @@ export function getStorageClient(config: PermissionsConfig, profile?: string) {
         throw new Error('Delegation must be signed to be stored');
       }
 
-      const expectedHash = getDelegationHashOffchain(delegation);
+      const expectedHash = hashDelegation(delegation);
 
       const body = JSON.stringify(
         { ...delegation, metadata: [] },
@@ -324,7 +324,7 @@ export function getStorageClient(config: PermissionsConfig, profile?: string) {
       const leafHash: Hex =
         typeof leafDelegationOrHash === 'string'
           ? leafDelegationOrHash
-          : getDelegationHashOffchain(leafDelegationOrHash);
+          : hashDelegation(leafDelegationOrHash);
 
       const response = await fetch(
         `${opts.apiUrl}/delegation/chain/${leafHash}`,

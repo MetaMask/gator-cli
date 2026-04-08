@@ -1,5 +1,5 @@
 import type { Delegation } from '@metamask/smart-accounts-kit';
-import { getDelegationHashOffchain } from '@metamask/smart-accounts-kit/utils';
+import { hashDelegation } from '@metamask/smart-accounts-kit/utils';
 import { loadConfig } from '../lib/config.js';
 import { getStorageClient } from '../lib/storage.js';
 import type { InspectOptions } from '../types.js';
@@ -59,7 +59,7 @@ export async function inspect(opts: InspectOptions) {
 }
 
 function printDelegation(d: Delegation) {
-  const hash = getDelegationHashOffchain(d);
+  const hash = hashDelegation(d);
   console.log(`  ---------------------------------`);
   console.log(`  Hash:       ${hash}`);
   console.log(`  From:       ${d.delegator}`);

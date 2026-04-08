@@ -660,10 +660,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/7715-permission-types@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@metamask/7715-permission-types@npm:0.4.0"
-  checksum: 10c0/8261fb4ff05a37f6b92342319acd1318376a3d522713232af5606b6cbcb97956638f037cb809688449e76fc5a917bbe150252755ae28ab0cd666e74a8e8e3f02
+"@metamask/7715-permission-types@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@metamask/7715-permission-types@npm:0.5.0"
+  checksum: 10c0/05c54702d4ec609aaa9957c99be0c3b4036d7c053ef9145e5972eee8671c0956696ab0ac82816d85e97fc56ea2a2377a4f4e7eea699f03311e6c9039d89b20b7
   languageName: node
   linkType: hard
 
@@ -694,28 +694,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/delegation-abis@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "@metamask/delegation-abis@npm:0.11.0"
-  checksum: 10c0/92a240ddc5c89fe6d128e6f54884cc443c260ac59fba27c3717ed2e2715ddf128e54659a4a10384d4aa6ab8f83153fefa72e2e3205b94f696995d870041fc2eb
+"@metamask/delegation-abis@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@metamask/delegation-abis@npm:1.0.0"
+  checksum: 10c0/b0788a22875cb35fb9a375d7f70fe44ba6ab7749ca554f19cdc9e4d574d67b026dd79713b92373122acfc5e82f177ef7150ed96ab8ff3989bc4cbd60cc5d44c3
   languageName: node
   linkType: hard
 
-"@metamask/delegation-core@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@metamask/delegation-core@npm:0.3.0"
+"@metamask/delegation-core@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@metamask/delegation-core@npm:1.0.0"
   dependencies:
     "@metamask/abi-utils": "npm:^3.0.0"
     "@metamask/utils": "npm:^11.4.0"
     "@noble/hashes": "npm:^1.8.0"
-  checksum: 10c0/70f40e38e8b0cb49cb2e7166ec5da0af8853faaa2441c2057d0f439623808c8c546470f76583941df4f08f00e3d64fd267afa9b3ad882ad5333ea3daf3faaaa0
+  checksum: 10c0/67754c7e3d24be65b99ec3ea3ed4d70575076d1a512541836af2fbdba71a5ffbbefc089d15f934b2770731a8851f0c1afe0212ddcf0ab2c226e10bdcb8b8cb4c
   languageName: node
   linkType: hard
 
-"@metamask/delegation-deployments@npm:^0.15.0":
-  version: 0.15.0
-  resolution: "@metamask/delegation-deployments@npm:0.15.0"
-  checksum: 10c0/f5e29ba49b4bc3cfd859808b6c65fb6ea8d28f62c7c7fd985c3a8683ee1d3599cd0db125a49d2d623ffe1298d72e43171385a743c3f36fa48a0458149701cf82
+"@metamask/delegation-deployments@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@metamask/delegation-deployments@npm:1.0.0"
+  checksum: 10c0/b5a6f35cc766e6a971c483adefd05b9283ce4de384ba543ab18830d6f7e016f114af372cf6ec4b05e2974337641c0d0d44501d8d5f86a9301ba72821613524c8
   languageName: node
   linkType: hard
 
@@ -724,7 +724,7 @@ __metadata:
   resolution: "@metamask/gator-cli@workspace:."
   dependencies:
     "@metamask/auto-changelog": "npm:^5.0.2"
-    "@metamask/smart-accounts-kit": "npm:^0.3.0"
+    "@metamask/smart-accounts-kit": "npm:^1.0.0"
     "@types/node": "npm:^22.0.0"
     "@vitest/coverage-istanbul": "npm:^4.0.18"
     commander: "npm:^12.1.0"
@@ -741,19 +741,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/smart-accounts-kit@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@metamask/smart-accounts-kit@npm:0.3.0"
+"@metamask/smart-accounts-kit@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@metamask/smart-accounts-kit@npm:1.0.0"
   dependencies:
-    "@metamask/7715-permission-types": "npm:^0.4.0"
-    "@metamask/delegation-abis": "npm:^0.11.0"
-    "@metamask/delegation-core": "npm:^0.3.0"
-    "@metamask/delegation-deployments": "npm:^0.15.0"
+    "@metamask/7715-permission-types": "npm:^0.5.0"
+    "@metamask/delegation-abis": "npm:^1.0.0"
+    "@metamask/delegation-core": "npm:^1.0.0"
+    "@metamask/delegation-deployments": "npm:^1.0.0"
     buffer: "npm:^6.0.3"
-    webauthn-p256: "npm:^0.0.10"
+    ox: "npm:0.8.1"
   peerDependencies:
     viem: ^2.31.4
-  checksum: 10c0/5a9df9f6c1da2d65fd8a9d39ffdae5ada427c88abec2679b545dc080c4aaaeae400bb3e8993bd7b4c7de23dd4a66e6c3144f5fde3b92c4526068550266386913
+  checksum: 10c0/7a00539ca8fc3aae6ef33f7f52fb3f3eb06095d0ffde7d80d8fa467ac9926c412d5f5c1fdb2fbed240c2a3001b72f7826388a733efe3c551fc803ad3a5ea5ca9
   languageName: node
   linkType: hard
 
@@ -808,7 +808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.4.0, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
   version: 1.9.7
   resolution: "@noble/curves@npm:1.9.7"
   dependencies:
@@ -824,7 +824,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.3.1, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.3.1, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: 10c0/06a0b52c81a6fa7f04d67762e08b2c476a00285858150caeaaff4037356dd5e119f45b2a530f638b77a5eeca013168ec1b655db41bae3236cb2e9d511484fc77
@@ -1481,7 +1481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abitype@npm:1.2.3, abitype@npm:^1.2.3":
+"abitype@npm:1.2.3, abitype@npm:^1.0.8, abitype@npm:^1.2.3":
   version: 1.2.3
   resolution: "abitype@npm:1.2.3"
   peerDependencies:
@@ -2840,6 +2840,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ox@npm:0.8.1":
+  version: 0.8.1
+  resolution: "ox@npm:0.8.1"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:^1.11.0"
+    "@noble/ciphers": "npm:^1.3.0"
+    "@noble/curves": "npm:^1.9.1"
+    "@noble/hashes": "npm:^1.8.0"
+    "@scure/bip32": "npm:^1.7.0"
+    "@scure/bip39": "npm:^1.6.0"
+    abitype: "npm:^1.0.8"
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/3d04df384a35c94b21a29d867ee3735acf9a975d46ffb0a26cc438b92f1e4952b2b3cddb74b4213e88d2988e82687db9b85c1018c5d4b24737b1c3d7cb7c809e
+  languageName: node
+  linkType: hard
+
 "p-map@npm:^7.0.2":
   version: 7.0.4
   resolution: "p-map@npm:7.0.4"
@@ -3721,16 +3742,6 @@ __metadata:
   bin:
     vitest: vitest.mjs
   checksum: 10c0/b913cd32032c95f29ff08c931f4b4c6fd6d2da498908d6770952c561a1b8d75c62499a1f04cadf82fb89cc0f9a33f29fb5dfdb899f6dbb27686a9d91571be5fa
-  languageName: node
-  linkType: hard
-
-"webauthn-p256@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "webauthn-p256@npm:0.0.10"
-  dependencies:
-    "@noble/curves": "npm:^1.4.0"
-    "@noble/hashes": "npm:^1.4.0"
-  checksum: 10c0/27d836d81a1fec24a31d2d9b652f8ff6876b51940d1003bbd14dc5cfa57c58d84223b5a4eece229516522fd997bc0bc7be618ac42b129fb5fa42fa530060b16d
   languageName: node
   linkType: hard
 
