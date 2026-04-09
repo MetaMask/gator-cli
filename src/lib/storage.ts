@@ -1,7 +1,6 @@
 import {
   type Hex,
   toHex,
-  getAddress,
   keccak256,
   encodeAbiParameters,
   hexToBytes,

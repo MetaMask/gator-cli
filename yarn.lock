@@ -712,10 +712,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/delegation-deployments@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@metamask/delegation-deployments@npm:1.0.0"
-  checksum: 10c0/b5a6f35cc766e6a971c483adefd05b9283ce4de384ba543ab18830d6f7e016f114af372cf6ec4b05e2974337641c0d0d44501d8d5f86a9301ba72821613524c8
+"@metamask/delegation-deployments@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@metamask/delegation-deployments@npm:1.1.0"
+  checksum: 10c0/925c01b48b6fdf1e4bfb20f315360b29dd671ab6b6c6af69853cee972fd86629d48445bf5090112d0bb8a71a9849946c5a4a1cd68ac23ef32e36a99e97723a94
   languageName: node
   linkType: hard
 
@@ -724,7 +724,7 @@ __metadata:
   resolution: "@metamask/gator-cli@workspace:."
   dependencies:
     "@metamask/auto-changelog": "npm:^5.0.2"
-    "@metamask/smart-accounts-kit": "npm:^1.0.0"
+    "@metamask/smart-accounts-kit": "npm:^1.1.0"
     "@types/node": "npm:^22.0.0"
     "@vitest/coverage-istanbul": "npm:^4.0.18"
     commander: "npm:^12.1.0"
@@ -741,19 +741,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/smart-accounts-kit@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@metamask/smart-accounts-kit@npm:1.0.0"
+"@metamask/smart-accounts-kit@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@metamask/smart-accounts-kit@npm:1.1.0"
   dependencies:
     "@metamask/7715-permission-types": "npm:^0.5.0"
     "@metamask/delegation-abis": "npm:^1.0.0"
     "@metamask/delegation-core": "npm:^1.0.0"
-    "@metamask/delegation-deployments": "npm:^1.0.0"
+    "@metamask/delegation-deployments": "npm:^1.1.0"
     buffer: "npm:^6.0.3"
     ox: "npm:0.8.1"
   peerDependencies:
     viem: ^2.31.4
-  checksum: 10c0/7a00539ca8fc3aae6ef33f7f52fb3f3eb06095d0ffde7d80d8fa467ac9926c412d5f5c1fdb2fbed240c2a3001b72f7826388a733efe3c551fc803ad3a5ea5ca9
+  checksum: 10c0/d1eb386d89a1fd8a0b5f205587cd5d8ad176313e4c73dd9ed34038db8a1d0ac35cc4e0e0aa243b155f337cd2025858b807f0aa36038fd5b66311decaf3762fe9
   languageName: node
   linkType: hard
 
