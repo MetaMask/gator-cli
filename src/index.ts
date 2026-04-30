@@ -85,6 +85,10 @@ program
   .requiredOption('--to <address>', 'Delegate address')
   .option('--profile <name>', 'Profile name', 'default')
   .option(
+    '--parentDelegation <hash>',
+    'Parent delegation hash for sub-delegation (omit for root delegation)',
+  )
+  .option(
     '--allow <type>',
     'Allow permission type (list): erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer, nativeTokenTransferAmount, nativeTokenPeriodTransfer, nativeTokenStreaming, ownershipTransfer, functionCall, limitedCalls, timestamp, blockNumber, redeemer, nonce, id, valueLte, allowedTargets, allowedMethods, allowedCalldata, argsEqualityCheck, exactCalldata, nativeTokenPayment, nativeBalanceChange, erc20BalanceChange, erc721BalanceChange, erc1155BalanceChange, deployed, exactExecution, custom',
     collect,
@@ -226,6 +230,7 @@ program
       profile: opts.profile,
       to: opts.to as Address,
       allow: opts.allow,
+      parentDelegation: opts.parentDelegation as Hex | undefined,
       tokenAddress: opts.tokenAddress as Address | undefined,
       maxAmount: opts.maxAmount,
       tokenId: opts.tokenId,

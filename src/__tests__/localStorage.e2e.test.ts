@@ -14,7 +14,7 @@ vi.mock('../lib/constants.js', async (importOriginal) => {
 
 const { getStorageClient } = await import('../lib/storage.js');
 import type { PermissionsConfig } from '../types.js';
-import { getDelegationHashOffchain } from '@metamask/smart-accounts-kit/utils';
+import { hashDelegation } from '@metamask/smart-accounts-kit/utils';
 
 const ALICE = '0x0f754A4E210E5116692197065a3A1B88054b192D';
 const BOB = '0xda2885d2244C5791e99F77fe4b2816743eed27cC';
@@ -53,7 +53,7 @@ describe('e2e: storeDelegation ↔ getDelegation', () => {
     const delegation = makeDelegation();
 
     const hash = await client.storeDelegation(delegation);
-    expect(hash).toMatch(getDelegationHashOffchain(delegation));
+    expect(hash).toMatch(hashDelegation(delegation));
 
     const retrieved = await client.getDelegation(hash);
     expect(retrieved.delegator).toBe(ALICE);

@@ -27,6 +27,7 @@ export interface ProfileOptions {
 export interface GrantOptions extends ProfileOptions {
   to: Address;
   allow: string[];
+  parentDelegation?: Hex;
   // Token caveats (erc20TransferAmount, erc20PeriodTransfer, erc20Streaming, erc721Transfer)
   tokenAddress?: Address;
   maxAmount?: string;
