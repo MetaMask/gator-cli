@@ -28,7 +28,7 @@ export async function grant(opts: GrantOptions) {
   const storageClient = getStorageClient(config, opts.profile);
 
   if (opts.parentDelegation) {
-    // This will throw when parent delegation is not found in storage. 
+    // This will throw when parent delegation is not found in storage.
     const parentDelegation = await storageClient.getDelegation(
       opts.parentDelegation,
     );
