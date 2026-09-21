@@ -21,16 +21,16 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.base-branch }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22.x
       - run: corepack enable
       - run: yarn install --immutable
-      - uses: MetaMask/action-create-release-pr@v4
+      - uses: MetaMask/action-create-release-pr@268f95dd4099efbf661dd8ad7a979e7c8cc61ff9 # v4.0.0
         with:
           release-type: ${{ github.event.inputs.release-type }}
           release-version: ${{ github.event.inputs.release-version }}
